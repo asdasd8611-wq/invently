@@ -448,6 +448,16 @@
       <button class="example-chip" onclick="setExample(this)">🚗 주차 공간 찾기</button>
       <button class="example-chip" onclick="setExample(this)">💊 약 먹는 시간</button>
       <button class="example-chip" onclick="setExample(this)">📦 택배 박스 버리기</button>
+      <button class="example-chip" onclick="setExample(this)">🎒 무거운 책가방</button>
+      <button class="example-chip" onclick="setExample(this)">🍱 급식 잔반</button>
+      <button class="example-chip" onclick="setExample(this)">🚪 화장실 빈 칸 확인</button>
+      <button class="example-chip" onclick="setExample(this)">🌡️ 체온계 기다리기</button>
+      <button class="example-chip" onclick="setExample(this)">🧦 양말 짝 찾기</button>
+      <button class="example-chip" onclick="setExample(this)">📚 교과서 이름 쓰기</button>
+      <button class="example-chip" onclick="setExample(this)">🐕 반려동물 밥 주기</button>
+      <button class="example-chip" onclick="setExample(this)">🚲 자전거 잠금장치</button>
+      <button class="example-chip" onclick="setExample(this)">🧴 샴푸 마지막 남은 것</button>
+      <button class="example-chip" onclick="setExample(this)">🛏️ 이불 커버 씌우기</button>
     </div>
     <button class="btn btn-primary btn-block" id="idea-btn" onclick="generateIdeas()" disabled>아이디어 만들기 →</button>
   </div>
@@ -535,6 +545,24 @@
       </div>
     </div>
     <button class="btn btn-primary btn-block" id="patent-start-btn" onclick="startPatent()" disabled>명세서 작성 시작하기 →</button>
+    <button class="btn btn-ghost btn-block" onclick="showSampleSpec()" style="margin-top:.625rem">📄 완성된 예시 명세서 보기</button>
+  </div>
+
+  <!-- 예시 명세서 -->
+  <div id="patent-sample" style="display:none">
+    <div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
+      <button class="btn btn-ghost" onclick="hideSampleSpec()" style="padding:7px 14px;font-size:13px">← 돌아가기</button>
+      <div style="font-size:12px;color:var(--text-tertiary)">작성 예시 참고용</div>
+    </div>
+    <div style="background:var(--bg-info);border-radius:var(--radius-md);padding:.75rem 1rem;font-size:13px;color:var(--text-info);margin-bottom:1rem;line-height:1.6">
+      💡 아래는 실제 발명대회 출품용으로 작성한 명세서 예시예요. 참고해서 나만의 명세서를 작성해보세요!
+    </div>
+    <div class="card">
+      <div class="card-body" id="sample-spec-body"></div>
+    </div>
+    <div style="margin-top:1rem">
+      <button class="btn btn-primary btn-block" onclick="hideSampleSpec();document.getElementById('inv-title').value='자동 우산 물기 제거 장치';document.getElementById('inv-author').value='(내 이름 입력)';checkPatentStart()">이 예시로 명세서 직접 써보기 →</button>
+    </div>
   </div>
 
   <!-- 작성 화면 -->
@@ -787,11 +815,21 @@
 <script>
 // ===== 상수 =====
 const EXAMPLES = {
-  '☔ 젖은 우산': '우산을 쓰고 건물에 들어가면 바닥에 물이 떨어져서 불편해요.',
-  '🎧 이어폰 줄 엉킴': '가방에 이어폰을 넣으면 항상 줄이 엉켜있어서 꺼낼 때마다 풀어야 해요.',
-  '🚗 주차 공간 찾기': '대형 쇼핑몰에서 빈 주차 자리를 찾으러 몇 바퀴씩 돌아야 해서 시간 낭비가 심해요.',
-  '💊 약 먹는 시간': '약을 하루 세 번 먹어야 하는데 중간에 먹었는지 안 먹었는지 헷갈려요.',
-  '📦 택배 박스 버리기': '택배가 오면 박스를 접고 테이프를 뜯어서 버려야 하는데 귀찮고 부피도 너무 커요.'
+  '☔ 젖은 우산': '우산을 쓰고 건물에 들어가면 바닥에 물이 떨어져서 불편해요. 다른 사람들도 미끄러질 수 있고 청소도 힘들어요.',
+  '🎧 이어폰 줄 엉킴': '가방에 이어폰을 넣으면 항상 줄이 엉켜있어서 꺼낼 때마다 풀어야 해요. 시간도 걸리고 짜증나요.',
+  '🚗 주차 공간 찾기': '대형 쇼핑몰에서 빈 주차 자리를 찾으러 몇 바퀴씩 돌아야 해서 시간 낭비가 심하고 기름도 낭비돼요.',
+  '💊 약 먹는 시간': '약을 하루 세 번 먹어야 하는데 중간에 먹었는지 안 먹었는지 헷갈려서 이중으로 먹거나 빠뜨려요.',
+  '📦 택배 박스 버리기': '택배가 오면 박스를 접고 테이프를 뜯어서 버려야 하는데 귀찮고 부피도 너무 크고 손도 다쳐요.',
+  '🎒 무거운 책가방': '매일 교과서를 다 들고 다니면 어깨가 너무 아프고 허리에도 안 좋아요. 어떤 날은 안 쓰는 책도 들고 다녀요.',
+  '🍱 급식 잔반': '급식을 먹다 보면 좋아하는 반찬이 이미 다 떨어져 있거나, 싫어하는 반찬만 남아서 잔반이 많이 생겨요.',
+  '🚪 화장실 빈 칸 확인': '공중 화장실에서 어떤 칸이 비어있는지 몰라서 문을 다 두드려보거나 틈 사이로 들여다봐야 해요.',
+  '🌡️ 체온계 기다리기': '체온을 재려면 체온계를 겨드랑이에 끼고 1~2분을 가만히 있어야 해서 너무 불편하고 특히 아이들이 힘들어해요.',
+  '🧦 양말 짝 찾기': '세탁 후 양말 짝을 맞추는 게 너무 오래 걸려요. 비슷하게 생긴 양말이 많아서 항상 헷갈려요.',
+  '📚 교과서 이름 쓰기': '새 학기마다 교과서와 공책에 이름을 써야 하는데 수십 권에 일일이 쓰려면 손도 아프고 시간도 너무 오래 걸려요.',
+  '🐕 반려동물 밥 주기': '여행이나 출장으로 집을 비울 때 반려동물 밥 주는 걸 맡길 사람이 없어서 걱정이 돼요.',
+  '🚲 자전거 잠금장치': '자전거 자물쇠 번호가 기억 안 나거나, 열쇠를 잃어버려서 자전거를 못 타는 경우가 생겨요.',
+  '🧴 샴푸 마지막 남은 것': '샴푸나 로션 통 안에 조금 남은 내용물을 끝까지 쓰려고 통을 거꾸로 세워두거나 물을 넣어 흔들어야 해요.',
+  '🛏️ 이불 커버 씌우기': '이불 커버를 씌울 때 속 이불이 한쪽으로 쏠리거나 뭉쳐서 매번 씌우는 게 너무 힘들어요.'
 };
 
 // SCAMPER 기반 아이디어 생성 템플릿
@@ -1691,6 +1729,161 @@ function toggleThink(i) {
   const open = body.style.display !== 'none';
   body.style.display = open ? 'none' : 'block';
   arr.textContent = open ? '›' : '˅';
+}
+
+
+// ===== 특허 명세서 예시 =====
+const SAMPLE_SPEC = [
+  { label: '발명의 명칭', val: '자동 우산 물기 제거 장치' },
+  { label: '발명자', val: '이재현 (의정부 ○○중학교 2학년)' },
+  { label: '기술 분야', val: '본 발명은 우산의 물기를 자동으로 제거하는 생활용품 분야에 관한 것이다.' },
+  { label: '배경 기술 (기존의 문제점)', val: '비가 오는 날 우산을 사용한 후 건물 내부로 이동할 때 우산에서 물방울이 떨어져 바닥이 젖는 문제가 발생한다. 현재 이를 해결하기 위해 일회용 우산 비닐봉투나 입구에 설치된 우산꽂이가 사용되고 있다. 그러나 일회용 비닐봉투는 매번 사용 후 버려지므로 환경오염을 유발하고, 우산꽂이는 건물 입구에만 설치되어 있어 이동 중 물이 계속 떨어지는 문제를 해결하지 못한다.' },
+  { label: '발명이 해결하려는 과제', val: '본 발명은 우산을 들고 실내로 이동할 때 물방울이 바닥에 떨어지는 문제를 해결하고, 일회용 비닐봉투를 사용하지 않고도 간편하게 우산의 물기를 제거할 수 있는 장치를 제공하는 것을 목적으로 한다.' },
+  { label: '발명의 구성 요소', val: '본 발명은 다음 부품으로 구성된다.\n(1) 원형 링 형태의 본체: 우산이 통과할 수 있는 크기의 링으로, 손에 쥐기 편한 손잡이가 달려 있다.\n(2) 초극세사 흡수 패드: 링 내부에 부착되어 우산 표면의 물기를 흡수한다.\n(3) 물받이 수조: 본체 하단에 위치하여 흡수된 물을 모아두는 역할을 한다.\n(4) 교체형 카트리지: 흡수 패드와 수조를 하나로 묶어 쉽게 분리하고 교체할 수 있게 한다.' },
+  { label: '발명의 실시 방법', val: '① 사용자는 우산을 접은 후 본 장치의 링 안에 우산 끝부분을 넣는다.\n② 우산을 링 안에서 위아래로 2~3회 통과시킨다.\n③ 이때 링 내부의 초극세사 흡수 패드가 우산 표면의 물기를 흡수한다.\n④ 흡수된 물은 하단 수조로 흘러내려 모인다.\n⑤ 수조가 가득 차면 카트리지를 분리하여 물을 버리고 재장착한다.' },
+  { label: '청구항', val: '청구항 1. 링 형태의 본체, 본체 내부에 설치된 흡수 패드, 본체 하단에 설치된 물받이 수조를 포함하는 우산 물기 제거 장치.\n\n청구항 2. 제1항에 있어서, 상기 흡수 패드와 물받이 수조는 하나의 카트리지로 구성되어 교체 가능한 것을 특징으로 하는 우산 물기 제거 장치.\n\n청구항 3. 제1항에 있어서, 상기 본체는 접이식으로 구성되어 가방에 휴대할 수 있는 것을 특징으로 하는 우산 물기 제거 장치.' },
+  { label: '도면 설명', val: '【도면 1】 자동 우산 물기 제거 장치 전체 사시도\n【도면 2】 장치 단면도 (내부 구조)\n【도면 3】 사용 방법 순서도\n\n※ 도면 부호 설명\n(1) 원형 링 본체\n(2) 초극세사 흡수 패드\n(3) 물받이 수조\n(4) 교체형 카트리지\n(5) 손잡이', isDiagram: true },
+  { label: '발명의 효과', val: '첫째, 우산에서 물방울이 바닥에 떨어지지 않아 실내 바닥의 미끄럼 사고를 예방할 수 있다.\n둘째, 일회용 우산 비닐봉투의 사용을 줄여 환경오염을 감소시킬 수 있다.\n셋째, 건물 청소에 드는 시간과 비용을 절약할 수 있다.\n넷째, 휴대가 가능하여 어디서든 사용할 수 있다.' },
+  { label: '발명의 요약', val: '본 발명은 젖은 우산의 물기를 간편하게 제거할 수 있는 휴대용 장치에 관한 것이다. 링 형태의 본체 내부에 초극세사 흡수 패드를 내장하여 우산을 통과시키는 것만으로 물기를 제거할 수 있으며, 제거된 물은 하단 수조에 모인다. 이를 통해 실내 미끄럼 사고를 예방하고 일회용 비닐봉투 사용을 줄여 환경보호에 기여할 수 있다.' }
+];
+
+
+function renderDiagram() {
+  return `
+    <div style="margin-bottom:.75rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+
+        <!-- 도면 1: 사시도 -->
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+          <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);margin-bottom:.5rem">【도면 1】 사시도</div>
+          <svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:160px">
+            <!-- 링 본체 외곽 -->
+            <ellipse cx="80" cy="55" rx="55" ry="18" fill="none" stroke="#888780" stroke-width="3"/>
+            <ellipse cx="80" cy="55" rx="55" ry="18" fill="#d3d1c7" opacity="0.3"/>
+            <!-- 링 두께 (측면) -->
+            <path d="M25,55 Q25,80 80,80 Q135,80 135,55" fill="none" stroke="#888780" stroke-width="3"/>
+            <path d="M25,55 Q25,72 80,72 Q135,72 135,55" fill="#b4b2a9" opacity="0.4"/>
+            <!-- 흡수 패드 (안쪽 링) -->
+            <ellipse cx="80" cy="55" rx="38" ry="12" fill="#85b7eb" opacity="0.5" stroke="#378add" stroke-width="1.5"/>
+            <ellipse cx="80" cy="55" rx="38" ry="12" fill="none" stroke="#378add" stroke-width="1.5"/>
+            <!-- 수조 (하단) -->
+            <rect x="48" y="72" width="64" height="22" rx="4" fill="#b4b2a9" stroke="#888780" stroke-width="1.5"/>
+            <rect x="52" y="76" width="56" height="14" rx="3" fill="#d3d1c7" opacity="0.6"/>
+            <!-- 손잡이 -->
+            <rect x="72" y="90" width="16" height="28" rx="4" fill="#888780" stroke="#5f5e5a" stroke-width="1.5"/>
+            <rect x="75" y="93" width="10" height="22" rx="3" fill="#b4b2a9"/>
+            <!-- 부품 번호 -->
+            <text x="148" y="52" font-size="8" fill="#5f5e5a">(1)</text>
+            <text x="120" y="50" font-size="8" fill="#185fa5">(2)</text>
+            <text x="148" y="82" font-size="8" fill="#5f5e5a">(3)</text>
+            <text x="94" y="108" font-size="8" fill="#5f5e5a">(5)</text>
+          </svg>
+        </div>
+
+        <!-- 도면 2: 단면도 -->
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+          <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);margin-bottom:.5rem">【도면 2】 단면도</div>
+          <svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:160px">
+            <!-- 링 외벽 좌 -->
+            <rect x="18" y="20" width="14" height="55" rx="3" fill="#b4b2a9" stroke="#888780" stroke-width="1.5"/>
+            <!-- 링 외벽 우 -->
+            <rect x="128" y="20" width="14" height="55" rx="3" fill="#b4b2a9" stroke="#888780" stroke-width="1.5"/>
+            <!-- 흡수 패드 좌 -->
+            <rect x="32" y="25" width="10" height="45" rx="2" fill="#85b7eb" stroke="#378add" stroke-width="1.5"/>
+            <!-- 흡수 패드 우 -->
+            <rect x="118" y="25" width="10" height="45" rx="2" fill="#85b7eb" stroke="#378add" stroke-width="1.5"/>
+            <!-- 우산 (가운데) -->
+            <rect x="73" y="5" width="14" height="75" rx="3" fill="#d3d1c7" stroke="#888780" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <!-- 물 흐름 화살표 -->
+            <line x1="42" y1="60" x2="42" y2="78" stroke="#378add" stroke-width="1.5" marker-end="url(#arr)"/>
+            <line x1="118" y1="60" x2="118" y2="78" stroke="#378add" stroke-width="1.5" marker-end="url(#arr)"/>
+            <defs>
+              <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#378add"/>
+              </marker>
+            </defs>
+            <!-- 수조 -->
+            <rect x="18" y="75" width="124" height="28" rx="4" fill="#d3d1c7" stroke="#888780" stroke-width="1.5"/>
+            <line x1="18" y1="88" x2="142" y2="88" stroke="#888780" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>
+            <!-- 손잡이 -->
+            <rect x="70" y="103" width="20" height="25" rx="4" fill="#888780" stroke="#5f5e5a" stroke-width="1.5"/>
+            <!-- 부품 번호 -->
+            <text x="4" y="50" font-size="8" fill="#5f5e5a">(1)</text>
+            <text x="34" y="22" font-size="8" fill="#185fa5">(2)</text>
+            <text x="4" y="88" font-size="8" fill="#5f5e5a">(3)</text>
+            <text x="4" y="115" font-size="8" fill="#5f5e5a">(5)</text>
+            <text x="76" y="2" font-size="7" fill="#888780">우산</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 도면 3: 사용 순서도 -->
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem">
+        <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);margin-bottom:.75rem;text-align:center">【도면 3】 사용 방법 순서도</div>
+        <svg viewBox="0 0 520 80" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <!-- 단계 박스들 -->
+          <rect x="5" y="18" width="88" height="44" rx="6" fill="#e8f0fb" stroke="#378add" stroke-width="1.5"/>
+          <text x="49" y="36" text-anchor="middle" font-size="9" font-weight="bold" fill="#185fa5">① 우산 접기</text>
+          <text x="49" y="50" text-anchor="middle" font-size="8" fill="#1a4fa0">우산을 완전히</text>
+          <text x="49" y="61" text-anchor="middle" font-size="8" fill="#1a4fa0">접는다</text>
+
+          <text x="103" y="44" text-anchor="middle" font-size="14" fill="#888780">→</text>
+
+          <rect x="112" y="18" width="88" height="44" rx="6" fill="#e8f0fb" stroke="#378add" stroke-width="1.5"/>
+          <text x="156" y="36" text-anchor="middle" font-size="9" font-weight="bold" fill="#185fa5">② 링에 삽입</text>
+          <text x="156" y="50" text-anchor="middle" font-size="8" fill="#1a4fa0">우산 끝을 링</text>
+          <text x="156" y="61" text-anchor="middle" font-size="8" fill="#1a4fa0">안에 넣는다</text>
+
+          <text x="210" y="44" text-anchor="middle" font-size="14" fill="#888780">→</text>
+
+          <rect x="219" y="18" width="88" height="44" rx="6" fill="#e8f0fb" stroke="#378add" stroke-width="1.5"/>
+          <text x="263" y="36" text-anchor="middle" font-size="9" font-weight="bold" fill="#185fa5">③ 통과시키기</text>
+          <text x="263" y="50" text-anchor="middle" font-size="8" fill="#1a4fa0">위아래로 2~3회</text>
+          <text x="263" y="61" text-anchor="middle" font-size="8" fill="#1a4fa0">통과시킨다</text>
+
+          <text x="317" y="44" text-anchor="middle" font-size="14" fill="#888780">→</text>
+
+          <rect x="326" y="18" width="88" height="44" rx="6" fill="#eaf5ee" stroke="#1d9e75" stroke-width="1.5"/>
+          <text x="370" y="36" text-anchor="middle" font-size="9" font-weight="bold" fill="#1a6b32">④ 물기 제거!</text>
+          <text x="370" y="50" text-anchor="middle" font-size="8" fill="#1a6b32">패드가 물기를</text>
+          <text x="370" y="61" text-anchor="middle" font-size="8" fill="#1a6b32">흡수한다</text>
+
+          <text x="424" y="44" text-anchor="middle" font-size="14" fill="#888780">→</text>
+
+          <rect x="433" y="18" width="82" height="44" rx="6" fill="#fdf4e3" stroke="#ba7517" stroke-width="1.5"/>
+          <text x="474" y="36" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4d0a">⑤ 수조 비우기</text>
+          <text x="474" y="50" text-anchor="middle" font-size="8" fill="#7a4d0a">수조 물을</text>
+          <text x="474" y="61" text-anchor="middle" font-size="8" fill="#7a4d0a">버린다</text>
+        </svg>
+      </div>
+
+      <!-- 부품 범례 -->
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.625rem">
+        <div style="font-size:12px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:20px;padding:3px 10px">(1) 원형 링 본체</div>
+        <div style="font-size:12px;color:var(--text-info);background:var(--bg-info);border-radius:20px;padding:3px 10px">(2) 초극세사 흡수 패드</div>
+        <div style="font-size:12px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:20px;padding:3px 10px">(3) 물받이 수조</div>
+        <div style="font-size:12px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:20px;padding:3px 10px">(4) 교체형 카트리지</div>
+        <div style="font-size:12px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:20px;padding:3px 10px">(5) 손잡이</div>
+      </div>
+    </div>
+  `;
+}
+
+function showSampleSpec() {
+  const body = document.getElementById('sample-spec-body');
+  body.innerHTML = SAMPLE_SPEC.map(s => `
+    <div class="preview-section">
+      <div class="preview-label">${s.label}</div>
+      ${s.isDiagram ? renderDiagram() : `<div class="preview-value">${s.val}</div>`}
+    </div>
+  `).join('');
+  hideEl('patent-start');
+  showEl('patent-sample');
+}
+
+function hideSampleSpec() {
+  hideEl('patent-sample');
+  showEl('patent-start');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
