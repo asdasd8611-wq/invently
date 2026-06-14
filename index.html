@@ -99,7 +99,8 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tabs { display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
   .nav-tab {
     font-size: 13px;
     padding: 5px 12px;
@@ -419,6 +420,8 @@
     <button class="nav-tab active" onclick="switchPage('idea')">아이디어</button>
     <button class="nav-tab" onclick="switchPage('patent')">특허 명세서</button>
     <button class="nav-tab" onclick="switchPage('solve')">문제해결</button>
+    <button class="nav-tab" onclick="switchPage('video')">동기유발</button>
+    <button class="nav-tab" onclick="switchPage('docs')">발명 서류</button>
   </div>
 </nav>
 
@@ -742,6 +745,44 @@
   </div>
 </div>
 
+<div class="page" id="page-video">
+  <div class="hero">
+    <div class="hero-badge">이재현의 발명교실 · 동기유발</div>
+    <h1>발명은 누구나<br>할 수 있어요!</h1>
+    <p>위대한 발명은 모두 작은 불편함에서 시작됐어요.<br>아래 이야기들을 읽고 나도 발명가가 되어봐요!</p>
+  </div>
+
+  <!-- 탭 -->
+  <div style="display:flex;gap:6px;margin-bottom:1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px">
+    <button onclick="showMotivTab('stories')" id="mtab-stories" style="font-size:13px;padding:7px 16px;border-radius:20px;border:none;background:var(--text);color:var(--bg);cursor:pointer;font-family:var(--font);white-space:nowrap;flex-shrink:0">발명 스토리</button>
+    <button onclick="showMotivTab('quiz')" id="mtab-quiz" style="font-size:13px;padding:7px 16px;border-radius:20px;border:0.5px solid var(--border-med);background:transparent;color:var(--text-secondary);cursor:pointer;font-family:var(--font);white-space:nowrap;flex-shrink:0">발명가 퀴즈</button>
+    <button onclick="showMotivTab('think')" id="mtab-think" style="font-size:13px;padding:7px 16px;border-radius:20px;border:0.5px solid var(--border-med);background:transparent;color:var(--text-secondary);cursor:pointer;font-family:var(--font);white-space:nowrap;flex-shrink:0">생각 실험</button>
+  </div>
+
+  <!-- 발명 스토리 -->
+  <div id="motiv-stories">
+    <div style="display:flex;flex-direction:column;gap:1rem" id="story-cards"></div>
+  </div>
+
+  <!-- 발명가 퀴즈 -->
+  <div id="motiv-quiz" style="display:none">
+    <div id="quiz-container"></div>
+  </div>
+
+  <!-- 생각 실험 -->
+  <div id="motiv-think" style="display:none">
+    <div id="think-container"></div>
+  </div>
+</div>
+
+<div class="page" id="page-docs">
+  <div class="hero">
+    <div class="hero-badge">이재현의 발명교실 · 발명 서류</div>
+    <h1>발명 서류,<br>이렇게 준비해요</h1>
+    <p>발명대회 제출부터 특허 출원까지<br>필요한 서류를 한눈에 알아봐요.</p>
+  </div>
+  <div id="docs-list" style="display:flex;flex-direction:column;gap:.75rem"></div>
+</div>
 
 <script>
 // ===== 상수 =====
@@ -811,7 +852,7 @@ function switchPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  const idx = id === 'idea' ? 0 : id === 'patent' ? 1 : 2;
+  const idx = {idea:0, patent:1, solve:2, video:3, docs:4}[id] || 0;
   document.querySelectorAll('.nav-tab')[idx].classList.add('active');
 }
 
@@ -921,20 +962,20 @@ function developIdea() {
     <div class="detail-label">✏️ 나만의 아이디어를 여기에 써보세요</div>
     <textarea id="my-idea-text" rows="5" placeholder="이 발상 기법을 활용해서 내가 떠올린 아이디어: ..." style="width:100%;border:0.5px solid var(--border-med);border-radius:var(--radius-md);padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);outline:none;resize:vertical;line-height:1.6;margin-top:.4rem"></textarea>
     <div class="detail-label" style="margin-top:1rem">📊 내 아이디어 평가해보기</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.4rem">
-      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.4rem">
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center;flex:1;min-width:100px">
         <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:.3rem">창의성</div>
         <div style="display:flex;justify-content:center;gap:3px" id="score-creativity">
           ${[1,2,3,4,5].map(n => `<span onclick="setScore('creativity',${n})" style="cursor:pointer;font-size:18px;color:var(--border-med)">★</span>`).join('')}
         </div>
       </div>
-      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center;flex:1;min-width:100px">
         <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:.3rem">실현 가능성</div>
         <div style="display:flex;justify-content:center;gap:3px" id="score-feasibility">
           ${[1,2,3,4,5].map(n => `<span onclick="setScore('feasibility',${n})" style="cursor:pointer;font-size:18px;color:var(--border-med)">★</span>`).join('')}
         </div>
       </div>
-      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center;flex:1;min-width:100px">
         <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:.3rem">시장성</div>
         <div style="display:flex;justify-content:center;gap:3px" id="score-marketability">
           ${[1,2,3,4,5].map(n => `<span onclick="setScore('marketability',${n})" style="cursor:pointer;font-size:18px;color:var(--border-med)">★</span>`).join('')}
@@ -1228,9 +1269,439 @@ function closeSolveDetail() {
   document.getElementById('solve-detail').style.display = 'none';
 }
 
+
+// ===== 발명 서류 =====
+const DOCS_DATA = [
+  {
+    icon: '📋',
+    color: 'var(--bg-info)',
+    colorText: 'var(--text-info)',
+    title: '발명 신고서',
+    tag: '발명대회 필수',
+    desc: '발명을 처음 기록하는 문서예요. 내가 언제, 어떤 아이디어를 떠올렸는지 증명하는 역할을 해요.',
+    items: [
+      { label: '발명의 명칭', detail: '발명한 것의 이름을 적어요. 예: 자동 우산 건조 링' },
+      { label: '발명자 정보', detail: '이름, 학교, 학년, 연락처를 적어요.' },
+      { label: '발명 동기', detail: '왜 이 발명을 하게 됐는지 — 어떤 불편함에서 시작했는지 써요.' },
+      { label: '발명 내용 요약', detail: '발명이 무엇인지, 어떻게 작동하는지 간단히 설명해요.' },
+      { label: '발명일', detail: '아이디어를 처음 떠올린 날짜를 적어요.' }
+    ],
+    tip: '아이디어가 떠오른 날 바로 적어두는 게 중요해요. 날짜가 발명의 선착순을 증명해줘요!'
+  },
+  {
+    icon: '📝',
+    color: 'var(--bg-success)',
+    colorText: 'var(--text-success)',
+    title: '발명 설명서',
+    tag: '발명대회 제출용',
+    desc: '발명의 내용을 자세히 설명하는 핵심 문서예요. 읽는 사람이 발명을 완전히 이해할 수 있도록 써야 해요.',
+    items: [
+      { label: '기술 분야', detail: '어떤 분야의 발명인지 써요. 예: 생활용품, 환경, 교육 등' },
+      { label: '해결하려는 문제', detail: '기존에 어떤 불편함이 있었는지 설명해요.' },
+      { label: '발명의 구성', detail: '어떤 부품으로 만들어졌는지 번호를 붙여서 설명해요.' },
+      { label: '작동 원리', detail: '어떻게 작동하는지 순서대로 설명해요.' },
+      { label: '발명의 효과', detail: '이 발명으로 무엇이 좋아지는지 써요.' }
+    ],
+    tip: '특허 명세서 탭에서 이 내용을 채울 수 있어요! 완성하면 복사해서 제출하면 돼요.'
+  },
+  {
+    icon: '✏️',
+    color: 'var(--bg-warning)',
+    colorText: 'var(--text-warning)',
+    title: '발명 도면',
+    tag: '그림으로 설명',
+    desc: '발명품의 모양과 구조를 그림으로 나타낸 문서예요. 글로 설명하기 어려운 부분을 시각적으로 보여줘요.',
+    items: [
+      { label: '정면도', detail: '발명품을 앞에서 본 모습을 그려요.' },
+      { label: '측면도', detail: '옆에서 본 모습을 그려요.' },
+      { label: '평면도', detail: '위에서 내려다본 모습을 그려요.' },
+      { label: '사시도 (투시도)', detail: '비스듬히 본 전체 모습을 그려요. 가장 중요해요!' },
+      { label: '부품 번호와 설명', detail: '각 부품에 (1) (2) (3)... 번호를 붙이고 무슨 역할인지 적어요.' }
+    ],
+    tip: '잘 그리지 않아도 괜찮아요! 발명의 구조가 이해될 정도면 충분해요. 자를 써서 깔끔하게 그려봐요.'
+  },
+  {
+    icon: '🏆',
+    color: '#f0eafd',
+    colorText: '#5a38b5',
+    title: '발명대회 출품서',
+    tag: '대회 제출용',
+    desc: '학교나 외부 발명대회에 참가할 때 제출하는 공식 서류예요. 대회마다 양식이 조금씩 달라요.',
+    items: [
+      { label: '출품자 정보', detail: '이름, 학교, 학년, 지도교사 이름을 적어요.' },
+      { label: '발명품 이름', detail: '발명품의 공식 이름을 정해서 써요.' },
+      { label: '출품 분야', detail: '대회에서 정한 분야 중 하나를 선택해요. 예: 생활 편의, 환경, 안전 등' },
+      { label: '발명 요약 (200자 이내)', detail: '어떤 문제를 어떻게 해결했는지 짧게 요약해요.' },
+      { label: '지도교사 확인', detail: '선생님의 도장이나 서명이 필요해요.' }
+    ],
+    tip: '대회마다 제출 기한이 있어요! 서류를 미리 준비하고 마감 전날까지 완성해두는 습관을 들여요.'
+  },
+  {
+    icon: '⚖️',
+    color: '#fde8ea',
+    colorText: '#a32d3a',
+    title: '특허 출원서 (참고용)',
+    tag: '실제 특허 출원',
+    desc: '발명을 법적으로 보호받기 위해 특허청에 제출하는 서류예요. 학생은 부모님이나 변리사의 도움을 받아요.',
+    items: [
+      { label: '특허 명세서', detail: '발명의 기술 내용을 법적 형식으로 작성한 문서예요. 특허 명세서 탭에서 초안을 만들 수 있어요!' },
+      { label: '청구범위', detail: '특허로 보호받고 싶은 내용을 정확하게 기술한 핵심 부분이에요.' },
+      { label: '도면', detail: '발명의 구조를 그린 도면이에요.' },
+      { label: '요약서', detail: '발명 내용을 150~300자로 요약한 문서예요.' },
+      { label: '출원료', detail: '특허청에 납부하는 수수료예요. 학생 할인 제도가 있어요.' }
+    ],
+    tip: '실제 특허 출원은 복잡해요. 특허청 학생 발명 프로그램이나 학교 발명 동아리를 통해 도움받을 수 있어요!'
+  }
+];
+
+function renderDocs() {
+  const list = document.getElementById('docs-list');
+  if (!list) return;
+  list.innerHTML = DOCS_DATA.map((d, i) => `
+    <div onclick="toggleDoc(${i})" style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer">
+      <div style="display:flex;align-items:center;gap:.875rem;padding:1rem 1.25rem;transition:background .1s" id="doc-header-${i}" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='transparent'">
+        <div style="width:40px;height:40px;border-radius:var(--radius-md);background:${d.color};display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${d.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem">
+            <span style="font-size:15px;font-weight:500;color:var(--text)">${d.title}</span>
+            <span style="font-size:11px;background:${d.color};color:${d.colorText};padding:2px 8px;border-radius:20px">${d.tag}</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.4">${d.desc.substring(0, 40)}...</div>
+        </div>
+        <div style="color:var(--text-tertiary);font-size:18px;flex-shrink:0" id="doc-arrow-${i}">›</div>
+      </div>
+      <div id="doc-body-${i}" style="display:none;padding:0 1.25rem 1.25rem">
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem;padding-top:.25rem">${d.desc}</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem">
+          ${d.items.map((item, j) => `
+            <div style="display:flex;gap:.75rem;padding:.625rem .875rem;background:var(--bg-secondary);border-radius:var(--radius-md)">
+              <div style="font-size:13px;font-weight:500;color:${d.colorText};min-width:100px;flex-shrink:0">${j+1}. ${item.label}</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">${item.detail}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div style="background:${d.color};border-radius:var(--radius-md);padding:.75rem 1rem;font-size:13px;color:${d.colorText};line-height:1.5">
+          💡 ${d.tip}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleDoc(i) {
+  const body = document.getElementById('doc-body-' + i);
+  const arrow = document.getElementById('doc-arrow-' + i);
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  arrow.textContent = isOpen ? '›' : '˅';
+}
+
+
+// ===== 동기유발 콘텐츠 =====
+const STORIES = [
+  {
+    emoji: '📌',
+    color: '#e8f0fb', colorText: '#1a4fa0',
+    title: '포스트잇',
+    inventor: '스펜서 실버 & 아트 프라이 (3M)',
+    year: '1968',
+    problem: '3M 연구원 스펜서 실버는 강력한 접착제를 만들려다 실수로 쉽게 떼어지는 접착제를 만들었어요.',
+    aha: '몇 년 후 동료 아트 프라이가 자꾸 떨어지는 책갈피를 보다가 "이 접착제를 여기 쓰면 어떨까?" 라고 생각했어요.',
+    result: '지금 전 세계에서 하루 수천만 장이 사용되는 포스트잇이 탄생했어요!',
+    lesson: '실수도 발명이 될 수 있어요. 포기하지 말고 다른 용도를 찾아봐요.',
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="10" width="90" height="75" rx="3" fill="#fac775"/><rect x="15" y="10" width="90" height="18" rx="3" fill="#f0b84a"/><line x1="25" y1="42" x2="95" y2="42" stroke="#e09820" stroke-width="1.5" opacity="0.5"/><line x1="25" y1="54" x2="95" y2="54" stroke="#e09820" stroke-width="1.5" opacity="0.5"/><line x1="25" y1="66" x2="75" y2="66" stroke="#e09820" stroke-width="1.5" opacity="0.5"/><text x="60" y="24" text-anchor="middle" font-size="9" font-weight="bold" fill="#7a4d0a">POST-IT</text></svg>'
+  },
+  {
+    emoji: '🍕',
+    color: '#eaf5ee', colorText: '#1a6b32',
+    title: '전자레인지',
+    inventor: '퍼시 스펜서 (레이시온)',
+    year: '1945',
+    problem: '레이더 장비를 연구하던 엔지니어 퍼시 스펜서가 마이크로파 장비 앞에 서 있다가 주머니 속 초콜릿이 녹은 것을 발견했어요.',
+    aha: '"마이크로파가 음식을 가열할 수 있다!" 바로 팝콘을 대고 실험했더니 팝콘이 튀겨졌어요.',
+    result: '전 세계 모든 부엌에 있는 전자레인지가 탄생했어요!',
+    lesson: '우연한 발견을 그냥 지나치지 마세요. 호기심이 발명의 씨앗이에요.',
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="20" width="100" height="65" rx="6" fill="#b4b2a9"/><rect x="15" y="25" width="70" height="55" rx="4" fill="#2c2c2a"/><rect x="18" y="28" width="64" height="49" rx="3" fill="#1a1a18"/><circle cx="100" cy="42" r="7" fill="#888780"/><circle cx="100" cy="42" r="4" fill="#5f5e5a"/><rect x="90" y="55" width="20" height="5" rx="2" fill="#63992244"/><rect x="90" y="63" width="20" height="5" rx="2" fill="#63992244"/><ellipse cx="50" cy="52" rx="15" ry="8" fill="#ef9f2744" stroke="#ef9f27" stroke-width="1"/><text x="50" y="56" text-anchor="middle" font-size="10">🍕</text></svg>'
+  },
+  {
+    emoji: '🩹',
+    color: '#fdf4e3', colorText: '#7a4d0a',
+    title: '반창고 (밴드에이드)',
+    inventor: '얼 딕슨',
+    year: '1920',
+    problem: '얼 딕슨의 아내는 요리하다 자주 손을 베었어요. 그런데 혼자서는 붕대를 감기가 너무 불편했어요.',
+    aha: '"미리 붙일 수 있는 붕대를 만들면 어떨까?" 거즈 조각을 테이프 중앙에 붙이고 방습지로 덮어뒀어요.',
+    result: '아내를 위한 작은 발명이 전 세계 수억 명이 사용하는 밴드에이드가 됐어요!',
+    lesson: '가장 가까운 사람의 불편함에서 위대한 발명이 나와요.',
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="35" width="80" height="30" rx="15" fill="#fac775"/><rect x="42" y="38" width="36" height="24" rx="3" fill="#f7f7f5"/><circle cx="48" cy="45" r="3" fill="#f09595" opacity="0.6"/><circle cx="60" cy="50" r="3" fill="#f09595" opacity="0.6"/><circle cx="72" cy="45" r="3" fill="#f09595" opacity="0.6"/><circle cx="54" cy="55" r="2" fill="#f09595" opacity="0.4"/><circle cx="66" cy="55" r="2" fill="#f09595" opacity="0.4"/></svg>'
+  },
+  {
+    emoji: '🌐',
+    color: '#f0eafd', colorText: '#5a38b5',
+    title: '인터넷 (WWW)',
+    inventor: '팀 버너스리',
+    year: '1989',
+    problem: '유럽 입자물리연구소(CERN)에서 연구자들이 서로 정보를 공유하기 너무 불편했어요. 이메일도 있었지만 문서를 연결하는 방법이 없었어요.',
+    aha: '"문서들을 링크로 연결하면 어떨까?" 단순한 아이디어 하나를 제안서로 작성했어요.',
+    result: '지금 우리가 매일 쓰는 월드와이드웹(WWW)이 탄생했어요!',
+    lesson: '불편함을 해결하려는 작은 아이디어가 세상을 완전히 바꿀 수 있어요.',
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="50" r="35" fill="none" stroke="#7f77dd" stroke-width="2"/><ellipse cx="60" cy="50" rx="15" ry="35" fill="none" stroke="#7f77dd" stroke-width="1.5"/><line x1="25" y1="50" x2="95" y2="50" stroke="#7f77dd" stroke-width="1.5"/><line x1="28" y1="35" x2="92" y2="35" stroke="#7f77dd" stroke-width="1" opacity="0.5"/><line x1="28" y1="65" x2="92" y2="65" stroke="#7f77dd" stroke-width="1" opacity="0.5"/><circle cx="60" cy="50" r="5" fill="#534ab7"/></svg>'
+  }
+];
+
+const QUIZ_DATA = [
+  {
+    question: "포스트잇은 어떤 실수에서 탄생했나요?",
+    options: ["강력한 접착제를 만들려다 실패", "노트를 잘못 붙였다가", "종이가 부족해서", "물에 젖은 메모지"],
+    answer: 0,
+    explain: "3M 연구원이 강력 접착제를 만들다가 실수로 약한 접착제를 발명했어요. 실패가 발명이 된 대표적인 사례예요!"
+  },
+  {
+    question: "발명의 시작점으로 가장 좋은 것은 무엇인가요?",
+    options: ["좋은 장비와 연구실", "일상의 불편함과 호기심", "많은 돈과 투자자", "훌륭한 선생님"],
+    answer: 1,
+    explain: "역사적인 발명 대부분은 일상의 작은 불편함에서 시작됐어요. 여러분의 주변을 유심히 관찰해보세요!"
+  },
+  {
+    question: "SCAMPER에서 'C'는 무엇을 의미하나요?",
+    options: ["창조 (Create)", "결합 (Combine)", "복사 (Copy)", "계산 (Calculate)"],
+    answer: 1,
+    explain: "C는 Combine(결합)이에요! 두 가지 다른 것을 합치면 새로운 발명이 탄생할 수 있어요. 스마트폰은 전화기+카메라+컴퓨터의 결합이에요!"
+  },
+  {
+    question: "발명 도면에서 가장 중요한 것은 무엇인가요?",
+    options: ["그림 실력", "색칠", "구조와 작동 원리 표현", "크기를 실물과 똑같이"],
+    answer: 2,
+    explain: "도면은 예쁠 필요가 없어요! 발명이 어떻게 생겼고 어떻게 작동하는지 이해할 수 있으면 충분해요."
+  },
+  {
+    question: "기술적 문제해결의 첫 번째 단계는 무엇인가요?",
+    options: ["바로 만들어보기", "인터넷 검색하기", "문제를 정확히 확인하기", "팀원 모으기"],
+    answer: 2,
+    explain: "문제를 정확히 이해하지 않으면 엉뚱한 해결책이 나와요. 육하원칙으로 문제를 꼼꼼히 분석하는 게 먼저예요!"
+  }
+];
+
+const THINK_DATA = [
+  {
+    icon: "🪑",
+    title: "의자를 발명해봐요",
+    desc: "의자가 없던 시절, 사람들은 바닥에 앉아야 했어요. 당신이 최초로 의자를 발명한다면?",
+    questions: [
+      "어떤 불편함에서 아이디어가 시작됐을까요?",
+      "처음 의자는 어떤 재료로 만들었을까요?",
+      "의자가 없으면 지금 우리 생활이 어떻게 달라질까요?",
+      "SCAMPER로 의자를 더 발전시키면 어떤 모습일까요?"
+    ],
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><rect x="25" y="35" width="70" height="8" rx="3" fill="#888780"/><rect x="30" y="43" width="10" height="35" rx="2" fill="#5f5e5a"/><rect x="80" y="43" width="10" height="35" rx="2" fill="#5f5e5a"/><rect x="25" y="55" width="70" height="6" rx="3" fill="#888780"/><rect x="30" y="18" width="10" height="20" rx="2" fill="#5f5e5a"/><rect x="80" y="18" width="10" height="20" rx="2" fill="#5f5e5a"/><rect x="25" y="15" width="70" height="6" rx="3" fill="#888780"/></svg>'
+  },
+  {
+    icon: "🕯️",
+    title: "어둠을 없애봐요",
+    desc: "전기가 없던 시대에 밤은 완전한 어둠이었어요. 어떻게 빛을 만들까요?",
+    questions: [
+      "불을 이용하지 않고 빛을 만들 수 있는 방법이 있을까요?",
+      "에디슨의 전구 발명에 10,000번의 실패가 있었어요. 포기하지 않은 이유가 뭘까요?",
+      "지금 사용하는 LED는 전구와 어떻게 다른가요?",
+      "미래의 조명은 어떤 모습일까요?"
+    ],
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="60" cy="38" rx="18" ry="22" fill="#fdf4e3" stroke="#fac775" stroke-width="2"/><line x1="60" y1="16" x2="60" y2="8" stroke="#fac775" stroke-width="2"/><ellipse cx="60" cy="7" rx="4" ry="5" fill="#ef9f27" opacity="0.8"/><rect x="50" y="58" width="20" height="30" rx="3" fill="#d3d1c7"/><rect x="48" y="56" width="24" height="5" rx="2" fill="#b4b2a9"/><line x1="40" y1="38" x2="30" y2="28" stroke="#fac775" stroke-width="1" opacity="0.4"/><line x1="80" y1="38" x2="90" y2="28" stroke="#fac775" stroke-width="1" opacity="0.4"/><line x1="60" y1="16" x2="60" y2="5" stroke="#fac775" stroke-width="1" opacity="0.4"/></svg>'
+  },
+  {
+    icon: "🚿",
+    title: "물 없이 씻어봐요",
+    desc: "사막이나 우주처럼 물이 부족한 곳에서는 어떻게 씻을까요?",
+    questions: [
+      "물 대신 무엇으로 몸을 깨끗이 할 수 있을까요?",
+      "실제로 우주인들은 어떻게 씻는다고 생각하나요?",
+      "물 절약 샤워기를 발명한다면 어떤 기능을 넣을까요?",
+      "100년 후 목욕은 어떻게 바뀔까요?"
+    ],
+    svg: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><rect x="45" y="10" width="8" height="30" rx="4" fill="#888780"/><rect x="35" y="35" width="50" height="8" rx="4" fill="#b4b2a9"/><circle cx="65" cy="30" r="12" fill="#b4b2a9"/><circle cx="65" cy="30" r="8" fill="#888780"/><circle cx="65" cy="30" r="3" fill="#5f5e5a"/><line x1="45" y1="50" x2="38" y2="65" stroke="#85b7eb" stroke-width="2" stroke-linecap="round"/><line x1="55" y1="50" x2="50" y2="67" stroke="#85b7eb" stroke-width="2" stroke-linecap="round"/><line x1="65" y1="50" x2="62" y2="68" stroke="#85b7eb" stroke-width="2" stroke-linecap="round"/><line x1="75" y1="50" x2="74" y2="67" stroke="#85b7eb" stroke-width="2" stroke-linecap="round"/><line x1="85" y1="50" x2="86" y2="65" stroke="#85b7eb" stroke-width="2" stroke-linecap="round"/></svg>'
+  }
+];
+
+let currentQuiz = 0;
+let quizScore = 0;
+let quizAnswered = [];
+
+function showMotivTab(tab) {
+  ['stories','quiz','think'].forEach(t => {
+    document.getElementById('motiv-' + t).style.display = t === tab ? 'block' : 'none';
+    const btn = document.getElementById('mtab-' + t);
+    if (t === tab) {
+      btn.style.background = 'var(--text)';
+      btn.style.color = 'var(--bg)';
+      btn.style.border = 'none';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.color = 'var(--text-secondary)';
+      btn.style.border = '0.5px solid var(--border-med)';
+    }
+  });
+}
+
+function renderStories() {
+  const el = document.getElementById('story-cards');
+  if (!el) return;
+  el.innerHTML = STORIES.map((s, i) => `
+    <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;cursor:pointer" onclick="toggleStory(${i})" id="story-hdr-${i}">
+        <div style="display:flex;align-items:center;gap:.875rem">
+          <div style="width:52px;height:52px;background:${s.color};border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0">${s.svg}</div>
+          <div>
+            <div style="font-size:15px;font-weight:500;color:var(--text)">${s.emoji} ${s.title}</div>
+            <div style="font-size:12px;color:var(--text-tertiary)">${s.inventor} · ${s.year}년</div>
+          </div>
+        </div>
+        <div style="color:var(--text-tertiary);font-size:18px" id="story-arr-${i}">›</div>
+      </div>
+      <div id="story-body-${i}" style="display:none;padding:0 1.25rem 1.25rem">
+        <div style="display:grid;grid-template-columns:1fr;gap:.625rem">
+          <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem 1rem">
+            <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem">😤 불편함</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">${s.problem}</div>
+          </div>
+          <div style="background:${s.color};border-radius:var(--radius-md);padding:.75rem 1rem">
+            <div style="font-size:11px;font-weight:500;color:${s.colorText};text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem">💡 아하! 순간</div>
+            <div style="font-size:13px;color:var(--text);line-height:1.6">${s.aha}</div>
+          </div>
+          <div style="background:var(--bg-success);border-radius:var(--radius-md);padding:.75rem 1rem">
+            <div style="font-size:11px;font-weight:500;color:var(--text-success);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem">🎉 결과</div>
+            <div style="font-size:13px;color:var(--text);line-height:1.6">${s.result}</div>
+          </div>
+          <div style="border-left:3px solid ${s.colorText};padding:.625rem .875rem;background:var(--bg-secondary);border-radius:0 var(--radius-md) var(--radius-md) 0">
+            <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">"${s.lesson}"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleStory(i) {
+  const body = document.getElementById('story-body-' + i);
+  const arr = document.getElementById('story-arr-' + i);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arr.textContent = open ? '›' : '˅';
+}
+
+function renderQuiz() {
+  const el = document.getElementById('quiz-container');
+  if (!el) return;
+  quizAnswered = new Array(QUIZ_DATA.length).fill(null);
+  quizScore = 0;
+  showQuestion(0);
+}
+
+function showQuestion(idx) {
+  const el = document.getElementById('quiz-container');
+  if (idx >= QUIZ_DATA.length) {
+    el.innerHTML = `
+      <div style="text-align:center;padding:2rem 0">
+        <div style="font-size:48px;margin-bottom:1rem">${quizScore >= 4 ? '🏆' : quizScore >= 3 ? '🥈' : '📚'}</div>
+        <div style="font-size:22px;font-weight:600;color:var(--text);margin-bottom:.5rem">${quizScore}점 / 5점</div>
+        <div style="font-size:14px;color:var(--text-secondary);margin-bottom:1.5rem">${quizScore >= 4 ? '훌륭해요! 발명 천재네요!' : quizScore >= 3 ? '잘 했어요! 조금만 더 공부해봐요!' : '괜찮아요! 다시 도전해봐요!'}</div>
+        <button onclick="renderQuiz()" style="padding:11px 24px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius-md);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font)">다시 풀기</button>
+      </div>
+    `;
+    return;
+  }
+  const q = QUIZ_DATA[idx];
+  el.innerHTML = `
+    <div style="margin-bottom:1rem">
+      <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:.75rem">문제 ${idx+1} / ${QUIZ_DATA.length}</div>
+      <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem">
+        <div style="font-size:16px;font-weight:500;color:var(--text);line-height:1.5;margin-bottom:1.25rem">${q.question}</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem" id="options-${idx}">
+          ${q.options.map((opt, oi) => `
+            <button onclick="answerQuiz(${idx},${oi})" id="opt-${idx}-${oi}" style="text-align:left;padding:.875rem 1rem;border:0.5px solid var(--border-med);border-radius:var(--radius-md);background:var(--bg);color:var(--text);font-size:14px;cursor:pointer;font-family:var(--font);line-height:1.4;transition:all .15s">
+              <span style="color:var(--text-tertiary);margin-right:.5rem">${['①','②','③','④'][oi]}</span>${opt}
+            </button>
+          `).join('')}
+        </div>
+        <div id="explain-${idx}" style="display:none;margin-top:1rem;background:var(--bg-info);border-radius:var(--radius-md);padding:.875rem 1rem;font-size:13px;color:var(--text-info);line-height:1.6"></div>
+      </div>
+    </div>
+  `;
+}
+
+function answerQuiz(qIdx, optIdx) {
+  if (quizAnswered[qIdx] !== null) return;
+  quizAnswered[qIdx] = optIdx;
+  const q = QUIZ_DATA[qIdx];
+  const correct = optIdx === q.answer;
+  if (correct) quizScore++;
+
+  const opts = document.querySelectorAll(`[id^="opt-${qIdx}-"]`);
+  opts.forEach((btn, i) => {
+    btn.style.cursor = 'default';
+    if (i === q.answer) {
+      btn.style.background = 'var(--bg-success)';
+      btn.style.borderColor = 'var(--text-success)';
+      btn.style.color = 'var(--text-success)';
+    } else if (i === optIdx && !correct) {
+      btn.style.background = 'var(--bg-danger)';
+      btn.style.borderColor = 'var(--text-danger)';
+      btn.style.color = 'var(--text-danger)';
+    }
+  });
+
+  const explain = document.getElementById('explain-' + qIdx);
+  explain.style.display = 'block';
+  explain.textContent = (correct ? '✅ 정답! ' : '❌ 아쉬워요. ') + q.explain;
+
+  setTimeout(() => showQuestion(qIdx + 1), 2200);
+}
+
+function renderThink() {
+  const el = document.getElementById('think-container');
+  if (!el) return;
+  el.innerHTML = THINK_DATA.map((t, i) => `
+    <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:.75rem">
+      <div style="display:flex;align-items:center;gap:.875rem;padding:1rem 1.25rem;cursor:pointer" onclick="toggleThink(${i})">
+        <div style="width:52px;height:52px;flex-shrink:0">${t.svg}</div>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:500;color:var(--text)">${t.icon} ${t.title}</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.4;margin-top:.2rem">${t.desc}</div>
+        </div>
+        <div style="color:var(--text-tertiary);font-size:18px;flex-shrink:0" id="think-arr-${i}">›</div>
+      </div>
+      <div id="think-body-${i}" style="display:none;padding:0 1.25rem 1.25rem">
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          ${t.questions.map((q, qi) => `
+            <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem 1rem">
+              <div style="font-size:12px;font-weight:500;color:var(--text-tertiary);margin-bottom:.35rem">생각해볼 질문 ${qi+1}</div>
+              <div style="font-size:14px;color:var(--text);line-height:1.5">${q}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top:.875rem;border:0.5px solid var(--border-med);border-radius:var(--radius-md)">
+          <textarea rows="4" placeholder="내 생각을 자유롭게 적어봐요..." style="width:100%;border:none;outline:none;padding:.875rem 1rem;font-family:var(--font);font-size:14px;color:var(--text);background:transparent;resize:vertical;line-height:1.6;border-radius:var(--radius-md)"></textarea>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleThink(i) {
+  const body = document.getElementById('think-body-' + i);
+  const arr = document.getElementById('think-arr-' + i);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arr.textContent = open ? '›' : '˅';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   renderSolveSteps();
+  renderDocs();
+  renderStories();
+  renderQuiz();
+  renderThink();
 });
+
+
 </script>
 </body>
 </html>
