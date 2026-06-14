@@ -113,47 +113,6 @@
   }
   .nav-tab:hover { background: var(--bg-secondary); color: var(--text); }
   .nav-tab.active { background: var(--text); color: var(--bg); }
-  .api-key-btn {
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 0.5px solid var(--border-med);
-    background: transparent;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    font-family: var(--font);
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .api-key-btn:hover { color: var(--text); border-color: var(--border-strong); }
-  .api-key-btn.set { color: var(--text-success); border-color: var(--text-success); background: var(--bg-success); }
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    padding: 1.5rem;
-  }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: var(--bg);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 400px;
-    border: 0.5px solid var(--border);
-  }
-  .modal-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: .5rem; }
-  .modal-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; }
-  .modal-link { color: var(--text-info); text-decoration: none; }
-  .modal-input { width: 100%; border: 0.5px solid var(--border-med); border-radius: var(--radius-md); padding: 10px 14px; font-size: 14px; font-family: var(--font); color: var(--text); background: var(--bg); outline: none; margin-bottom: .75rem; }
-  .modal-input:focus { border-color: var(--border-strong); }
-  .modal-row { display: flex; gap: 8px; }
-  .modal-row .btn { flex: 1; }
 
   /* PAGES */
   .page { display: none; max-width: 640px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
@@ -456,34 +415,13 @@
     <div class="nav-brand-main"><em>이재현</em>의 발명교실</div>
     <div class="nav-brand-sub">AI Invention Lab</div>
   </div>
-  <div style="display:flex;align-items:center;gap:6px">
-    <button class="api-key-btn" id="api-key-btn" onclick="openApiModal()">
-      <span id="api-key-icon">🔑</span> <span id="api-key-label">API 키</span>
-    </button>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="switchPage('idea')">아이디어</button>
-      <button class="nav-tab" onclick="switchPage('patent')">특허 명세서</button>
-      <button class="nav-tab" onclick="switchPage('solve')">문제해결</button>
-    </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPage('idea')">아이디어</button>
+    <button class="nav-tab" onclick="switchPage('patent')">특허 명세서</button>
+    <button class="nav-tab" onclick="switchPage('solve')">문제해결</button>
   </div>
 </nav>
 
-<!-- API 키 모달 -->
-<div class="modal-overlay" id="api-modal">
-  <div class="modal">
-    <div class="modal-title">🔑 Anthropic API 키 입력</div>
-    <div class="modal-desc">
-      AI 기능을 사용하려면 API 키가 필요해요.<br>
-      <a class="modal-link" href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> 에서 무료로 발급받을 수 있어요.<br><br>
-      키는 이 기기에만 저장되며 외부로 전송되지 않아요.
-    </div>
-    <input class="modal-input" type="password" id="api-key-input" placeholder="sk-ant-..." />
-    <div class="modal-row">
-      <button class="btn btn-primary" onclick="saveApiKey()">저장하기</button>
-      <button class="btn btn-ghost" onclick="closeApiModal()">취소</button>
-    </div>
-  </div>
-</div>
 
 <!-- ===== 아이디어 생성 페이지 ===== -->
 <div class="page active" id="page-idea">
@@ -808,12 +746,65 @@
 <script>
 // ===== 상수 =====
 const EXAMPLES = {
-  '☔ 젖은 우산': '우산을 쓰고 건물에 들어가면 바닥에 물이 떨어져서 불편해요. 다른 사람들도 미끄러질 수 있고 청소도 힘들어요.',
-  '🎧 이어폰 줄 엉킴': '가방에 이어폰을 넣으면 항상 줄이 엉켜있어서 꺼낼 때마다 풀어야 해요. 시간도 걸리고 짜증나요.',
+  '☔ 젖은 우산': '우산을 쓰고 건물에 들어가면 바닥에 물이 떨어져서 불편해요.',
+  '🎧 이어폰 줄 엉킴': '가방에 이어폰을 넣으면 항상 줄이 엉켜있어서 꺼낼 때마다 풀어야 해요.',
   '🚗 주차 공간 찾기': '대형 쇼핑몰에서 빈 주차 자리를 찾으러 몇 바퀴씩 돌아야 해서 시간 낭비가 심해요.',
-  '💊 약 먹는 시간': '약을 하루 세 번 먹어야 하는데 중간에 먹었는지 안 먹었는지 헷갈려서 불편해요.',
+  '💊 약 먹는 시간': '약을 하루 세 번 먹어야 하는데 중간에 먹었는지 안 먹었는지 헷갈려요.',
   '📦 택배 박스 버리기': '택배가 오면 박스를 접고 테이프를 뜯어서 버려야 하는데 귀찮고 부피도 너무 커요.'
 };
+
+// SCAMPER 기반 아이디어 생성 템플릿
+const SCAMPER = [
+  {
+    method: 'S — 대체 (Substitute)',
+    icon: '🔄',
+    color: '#e8f0fb',
+    colorText: '#1a4fa0',
+    template: (problem) => `기존 방법 대신 완전히 다른 재료나 방식을 사용한다면? → "${problem}" 을 해결하는 새로운 소재나 방법을 찾아보세요.`
+  },
+  {
+    method: 'C — 결합 (Combine)',
+    icon: '🔗',
+    color: '#eaf5ee',
+    colorText: '#1a6b32',
+    template: (problem) => `두 가지 물건이나 아이디어를 합친다면? → "${problem}" 과 관련된 물건에 다른 기능을 결합해보세요.`
+  },
+  {
+    method: 'A — 적용 (Adapt)',
+    icon: '⚡',
+    color: '#fdf4e3',
+    colorText: '#7a4d0a',
+    template: (problem) => `다른 분야에서 이미 해결한 방법을 가져온다면? → "${problem}" 과 비슷한 문제를 자연이나 다른 산업에서는 어떻게 해결했나요?`
+  },
+  {
+    method: 'M — 변형 (Modify)',
+    icon: '✏️',
+    color: '#f0eafd',
+    colorText: '#5a38b5',
+    template: (problem) => `크기, 모양, 색깔, 속도를 바꾼다면? → "${problem}" 과 관련된 물건을 더 크게, 작게, 빠르게, 느리게 바꾸면 어떨까요?`
+  },
+  {
+    method: 'P — 다른 용도 (Put to other uses)',
+    icon: '🎯',
+    color: '#fde8ea',
+    colorText: '#a32d3a',
+    template: (problem) => `완전히 다른 용도로 사용한다면? → "${problem}" 과 관련된 물건이나 부산물을 다른 곳에 활용할 수 있을까요?`
+  },
+  {
+    method: 'E — 제거 (Eliminate)',
+    icon: '✂️',
+    color: '#f7f7f5',
+    colorText: '#5a5a56',
+    template: (problem) => `불필요한 부분을 없앤다면? → "${problem}" 을 일으키는 원인 자체를 없애거나 줄일 수 있는 방법은 없을까요?`
+  },
+  {
+    method: 'R — 역발상 (Reverse)',
+    icon: '🔃',
+    color: '#e8f0fb',
+    colorText: '#1a4fa0',
+    template: (problem) => `반대로 생각한다면? → "${problem}" 의 반대 상황을 상상해보세요. 문제를 뒤집으면 어떤 아이디어가 나올까요?`
+  }
+];
 
 // ===== 페이지 전환 =====
 function switchPage(id) {
@@ -856,70 +847,48 @@ function resetIdea() {
   document.getElementById('develop-btn').disabled = true;
 }
 
-async function generateIdeas() {
+function generateIdeas() {
   problemText = document.getElementById('problem-input').value.trim();
   if (!problemText) return;
+
   hideEl('idea-input');
   showEl('idea-loading');
+  document.getElementById('idea-loading-text').textContent = 'SCAMPER 기법으로 아이디어를 만드는 중...';
 
-  const msgs = ['문제를 분석하고 있어요...', '발명 기법을 적용하는 중...', '아이디어를 정리하는 중...'];
-  let mi = 0;
-  const iv = setInterval(() => {
-    mi = (mi + 1) % msgs.length;
-    document.getElementById('idea-loading-text').textContent = msgs[mi];
-  }, 1800);
+  // 짧은 키워드 추출 (앞 15자)
+  const keyword = problemText.length > 15 ? problemText.substring(0, 15) + '...' : problemText;
 
-  try {
-    const res = await callClaude(`사용자가 일상에서 겪은 불편함을 분석하고 창의적인 발명 아이디어 5개를 생성해주세요.
+  // SCAMPER 기반으로 7개 아이디어 자동 생성
+  ideasData = SCAMPER.map((s, i) => ({
+    name: s.method,
+    description: s.template(keyword),
+    method: s.method.split(' — ')[1] || s.method,
+    icon: s.icon,
+    color: s.color,
+    colorText: s.colorText,
+    creativity: [4,3,5,4,3,4,5][i],
+    feasibility: [4,4,3,3,4,5,3][i],
+    marketability: [4,3,4,3,3,4,4][i]
+  }));
 
-불편함: "${problemText}"
-
-반드시 아래 JSON 형식만 출력하세요. 다른 텍스트는 절대 포함하지 마세요:
-{
-  "core_problem": "핵심 문제를 한 문장으로",
-  "target_user": "불편함을 겪는 사용자",
-  "situation": "언제/어디서 발생하는지",
-  "ideas": [
-    {
-      "name": "발명 이름",
-      "description": "아이디어를 한 문장으로 설명",
-      "method": "사용한 발상 기법",
-      "creativity": 4,
-      "feasibility": 3,
-      "marketability": 4
-    }
-  ]
-}
-아이디어는 정확히 5개, 각 점수는 1-5 정수, SCAMPER/역발상/결합 발상/극단적 조건/관점 변경 등 다양한 기법을 활용하세요.`);
-
-    clearInterval(iv);
-    const d = JSON.parse(res.replace(/```json|```/g, '').trim());
-    renderIdeas(d);
-  } catch(e) {
-    clearInterval(iv);
-    hideEl('idea-loading');
-    showEl('idea-results');
-    const eb = document.getElementById('idea-error');
-    eb.textContent = 'AI 연결에 실패했어요. 잠시 후 다시 시도해주세요.';
-    eb.style.display = 'block';
-  }
+  setTimeout(() => {
+    renderIdeas();
+  }, 800);
 }
 
-function renderIdeas(d) {
-  ideasData = d.ideas || [];
+function renderIdeas() {
   selectedIdx = null;
-  document.getElementById('core-problem').textContent = d.core_problem || '—';
-  document.getElementById('target-user').textContent = d.target_user || '—';
-  document.getElementById('situation').textContent = d.situation || '—';
+  document.getElementById('core-problem').textContent = problemText;
+  document.getElementById('target-user').textContent = '이 문제를 겪는 모든 사람';
+  document.getElementById('situation').textContent = '일상 속 다양한 상황';
   document.getElementById('develop-btn').disabled = true;
   document.getElementById('idea-error').style.display = 'none';
 
   document.getElementById('ideas-list').innerHTML = ideasData.map((idea, i) => `
     <div class="idea-card" id="icard-${i}" onclick="selectIdea(${i})">
-      <div class="idea-num">아이디어 ${i + 1} · ${idea.method || ''}</div>
-      <div class="idea-name">${idea.name}</div>
-      <div class="idea-desc">${idea.description}</div>
-      <div class="scores">
+      <div class="idea-num">${idea.icon} ${idea.method}</div>
+      <div class="idea-name" style="font-size:14px">${idea.description}</div>
+      <div class="scores" style="margin-top:.75rem">
         <div class="score-badge">창의성 <strong>${idea.creativity}/5</strong></div>
         <div class="score-badge">실현 가능성 <strong>${idea.feasibility}/5</strong></div>
         <div class="score-badge">시장성 <strong>${idea.marketability}/5</strong></div>
@@ -938,57 +907,60 @@ function selectIdea(i) {
   document.getElementById('develop-btn').disabled = false;
 }
 
-async function developIdea() {
+function developIdea() {
   if (selectedIdx === null) return;
   const idea = ideasData[selectedIdx];
-  hideEl('idea-results');
-  showEl('idea-loading');
-  document.getElementById('idea-loading-text').textContent = '아이디어를 발전시키는 중...';
 
-  try {
-    const res = await callClaude(`다음 발명 아이디어를 발명 카드 형식으로 상세하게 발전시켜주세요.
-
-원래 문제: "${problemText}"
-발명 이름: "${idea.name}"
-기본 설명: "${idea.description}"
-
-반드시 아래 JSON 형식만 출력하세요:
-{
-  "name": "발명 이름",
-  "tagline": "한 줄 슬로건",
-  "problem": "해결하는 문제",
-  "principle": "작동 원리 (2-3문장)",
-  "parts": ["핵심 부품1", "핵심 부품2", "핵심 부품3"],
-  "targets": ["주요 사용 장소/대상1", "사용 장소/대상2", "사용 장소/대상3"],
-  "difference": "기존 제품과의 차이점",
-  "effect": "기대 효과 (경제/환경/사회적)",
-  "challenge": "예상 기술적 도전 과제",
-  "next_step": "아이디어를 발전시킬 다음 단계"
-}`);
-
-    const card = JSON.parse(res.replace(/```json|```/g, '').trim());
-    renderDetail(card);
-  } catch(e) {
-    showIdeaResults();
-    document.getElementById('idea-error').textContent = 'AI 연결에 실패했어요.';
-    document.getElementById('idea-error').style.display = 'block';
-  }
-}
-
-function renderDetail(card) {
-  document.getElementById('detail-name').textContent = card.name;
-  document.getElementById('detail-tagline').textContent = card.tagline || '';
+  document.getElementById('detail-name').textContent = idea.method + ' 발상법으로 생각해보기';
+  document.getElementById('detail-tagline').textContent = idea.description;
   document.getElementById('detail-body').innerHTML = `
-    <div class="detail-label">해결 문제</div><div class="detail-value">${card.problem}</div>
-    <div class="detail-label">작동 원리</div><div class="detail-value">${card.principle}</div>
-    <div class="detail-label">핵심 부품</div><div class="detail-value"><ul>${(card.parts||[]).map(p=>`<li>${p}</li>`).join('')}</ul></div>
-    <div class="detail-label">적용 대상</div><div class="detail-value"><ul>${(card.targets||[]).map(t=>`<li>${t}</li>`).join('')}</ul></div>
-    <div class="detail-label">기존 제품과의 차이</div><div class="detail-value">${card.difference}</div>
-    <div class="detail-label">기대 효과</div><div class="detail-value">${card.effect}</div>
-    <div class="detail-label">기술적 도전 과제</div><div class="detail-value">${card.challenge}</div>
-    <div class="detail-label">다음 단계</div><div class="detail-value">${card.next_step}</div>
+    <div style="background:${idea.color};border-radius:var(--radius-md);padding:1rem 1.25rem;margin-bottom:1rem">
+      <div style="font-size:13px;font-weight:500;color:${idea.colorText};margin-bottom:.5rem">${idea.icon} ${idea.method}</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.7">${idea.description}</div>
+    </div>
+    <div class="detail-label">✏️ 나만의 아이디어를 여기에 써보세요</div>
+    <textarea id="my-idea-text" rows="5" placeholder="이 발상 기법을 활용해서 내가 떠올린 아이디어: ..." style="width:100%;border:0.5px solid var(--border-med);border-radius:var(--radius-md);padding:10px 14px;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);outline:none;resize:vertical;line-height:1.6;margin-top:.4rem"></textarea>
+    <div class="detail-label" style="margin-top:1rem">📊 내 아이디어 평가해보기</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.4rem">
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:.3rem">창의성</div>
+        <div style="display:flex;justify-content:center;gap:3px" id="score-creativity">
+          ${[1,2,3,4,5].map(n => `<span onclick="setScore('creativity',${n})" style="cursor:pointer;font-size:18px;color:var(--border-med)">★</span>`).join('')}
+        </div>
+      </div>
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:.3rem">실현 가능성</div>
+        <div style="display:flex;justify-content:center;gap:3px" id="score-feasibility">
+          ${[1,2,3,4,5].map(n => `<span onclick="setScore('feasibility',${n})" style="cursor:pointer;font-size:18px;color:var(--border-med)">★</span>`).join('')}
+        </div>
+      </div>
+      <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:.75rem;text-align:center">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:.3rem">시장성</div>
+        <div style="display:flex;justify-content:center;gap:3px" id="score-marketability">
+          ${[1,2,3,4,5].map(n => `<span onclick="setScore('marketability',${n})" style="cursor:pointer;font-size:18px;color:var(--border-med)">★</span>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="detail-label" style="margin-top:1rem">💡 다음 단계</div>
+    <div style="background:var(--bg-info);border-radius:var(--radius-md);padding:.875rem 1rem;font-size:13px;color:var(--text-info);line-height:1.6">
+      이 아이디어가 마음에 드나요? <strong>특허 명세서</strong> 탭으로 이동해서 더 구체적으로 발전시켜보세요!
+    </div>
   `;
   hideEl('idea-loading');
+  hideEl('idea-results');
+  showEl('idea-detail');
+}
+
+function setScore(type, val) {
+  const container = document.getElementById('score-' + type);
+  const stars = container.querySelectorAll('span');
+  stars.forEach((s, i) => {
+    s.style.color = i < val ? '#f0b84a' : 'var(--border-med)';
+  });
+}
+
+function showIdeaDetail() {
+  hideEl('idea-results');
   showEl('idea-detail');
 }
 
@@ -1058,7 +1030,7 @@ function renderClaims() {
     <div class="claim-row">
       <span class="claim-label">청구항 ${i + 1}.</span>
       <textarea rows="3" style="min-height:72px" placeholder="${i === 0 ? '예: 원형 링 형태의 본체, 흡수 패드, 물받이 수조를 포함하는 우산 건조 장치.' : '예: 청구항 1의 장치에 있어서, 상기 흡수 패드는 교체 가능한 카트리지 형태인 것을 특징으로 하는 장치.'}" oninput="updateClaim(${i},this.value)">${c}</textarea>
-      ${claims.length > 1 ? `<button class="claim-remove" onclick="removeClaim(${i})">×</button>` : ''}
+      ${claims.length > 1 ? `<button class="claim-remove" onclick="removeClaim(${i})">x</button>` : ''}
     </div>
   `).join('');
   document.getElementById('claim-count').textContent = '청구항 ' + claims.length + '개';
@@ -1068,32 +1040,6 @@ function renderClaims() {
 function updateClaim(i, v) { claims[i] = v; onSec(3); }
 function addClaim() { claims.push(''); renderClaims(); }
 function removeClaim(i) { claims.splice(i, 1); renderClaims(); }
-
-const AI_PROMPTS = [
-  (t) => `발명 이름: "${t.invTitle}"\n기술 분야: "${document.getElementById('f-bg-field').value}"\n기존 문제점: "${document.getElementById('f-bg-problem').value}"\n\n학생이 특허 명세서의 "발명의 배경" 섹션을 더 잘 쓸 수 있도록 생각을 자극하는 질문 2~3개만 해주세요. 답을 직접 주지 말고 질문만, 친근한 말투로.`,
-  (t) => `발명 이름: "${t.invTitle}"\n현재 작성: "${document.getElementById('f-obj').value}"\n\n학생이 발명의 목적(해결 과제)을 더 명확하게 쓸 수 있도록 질문 2~3개만 해주세요. 답은 주지 말고.`,
-  (t) => `발명 이름: "${t.invTitle}"\n구성: "${document.getElementById('f-struct').value}"\n작동: "${document.getElementById('f-action').value}"\n\n학생이 구조와 작동 원리를 더 구체적으로 설명할 수 있도록 질문 2~3개만 해주세요.`,
-  (t) => `발명 이름: "${t.invTitle}"\n현재 청구항:\n${claims.map((c,i)=>`청구항 ${i+1}: "${c}"`).join('\n')}\n\n학생이 청구항을 더 탄탄하게 쓸 수 있도록 질문 2~3개만 해주세요. 범위가 적절한지 힌트 질문으로.`,
-  (t) => `발명 이름: "${t.invTitle}"\n현재 효과: "${document.getElementById('f-effect').value}"\n\n학생이 발명의 효과를 경제/환경/사회적 관점에서 더 생각할 수 있도록 질문 2~3개만 해주세요.`,
-  (t) => `발명 이름: "${t.invTitle}"\n현재 요약: "${document.getElementById('f-abstract').value}"\n\n학생이 요약을 더 완성도 있게 쓸 수 있도록 질문 2~3개만 해주세요. 문제-방법-효과가 담겼는지 확인하는 힌트로.`
-];
-
-async function askAI(i) {
-  const btn = document.getElementById('ai-btn-' + i);
-  const res = document.getElementById('ai-r-' + i);
-  btn.disabled = true;
-  btn.textContent = '생각하는 중...';
-  res.className = 'ai-result show';
-  res.textContent = '';
-  try {
-    const text = await callClaude(AI_PROMPTS[i]({ invTitle }));
-    res.textContent = text;
-  } catch(e) {
-    res.textContent = '잠시 후 다시 시도해주세요.';
-  }
-  btn.disabled = false;
-  btn.textContent = '✦ AI에게 힌트 질문받기';
-}
 
 function goPreview() {
   const sections = [
@@ -1133,81 +1079,16 @@ function copySpec() {
   const text = sections.filter(s => s.val && s.val.trim()).map(s => s.label + '\n' + s.val).join('\n\n');
   navigator.clipboard.writeText(text).then(() => {
     const btn = event.target;
-    btn.textContent = '✅ 복사됨!';
-    setTimeout(() => btn.textContent = '📋 명세서 복사하기', 2000);
+    btn.textContent = '복사됨!';
+    setTimeout(() => btn.textContent = '명세서 복사하기', 2000);
   });
 }
-
-// ===== API 키 관리 =====
-function openApiModal() {
-  const saved = localStorage.getItem('inv_api_key') || '';
-  document.getElementById('api-key-input').value = saved;
-  document.getElementById('api-modal').classList.add('show');
-}
-function closeApiModal() {
-  document.getElementById('api-modal').classList.remove('show');
-}
-function saveApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (!key) { alert('API 키를 입력해주세요.'); return; }
-  localStorage.setItem('inv_api_key', key);
-  updateApiBtn();
-  closeApiModal();
-}
-function updateApiBtn() {
-  const key = localStorage.getItem('inv_api_key');
-  const btn = document.getElementById('api-key-btn');
-  const label = document.getElementById('api-key-label');
-  if (key) {
-    btn.classList.add('set');
-    label.textContent = '키 설정됨';
-    document.getElementById('api-key-icon').textContent = '✓';
-  } else {
-    btn.classList.remove('set');
-    label.textContent = 'API 키';
-    document.getElementById('api-key-icon').textContent = '🔑';
-  }
-}
-document.addEventListener('DOMContentLoaded', updateApiBtn);
-document.getElementById('api-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeApiModal();
-});
-
-// ===== Claude API =====
-async function callClaude(prompt) {
-  const apiKey = localStorage.getItem('inv_api_key');
-  if (!apiKey) {
-    openApiModal();
-    throw new Error('API 키가 없어요. 키를 입력한 후 다시 시도해주세요.');
-  }
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  const data = await res.json();
-  return data.content.map(b => b.text || '').join('');
-}
-
 
 // ===== 기술적 문제해결 =====
 const SOLVE_STEPS = [
   {
-    id: 0,
-    num: '01',
-    title: '문제 확인',
-    icon: '🔍',
-    color: 'var(--bg-info)',
-    colorText: 'var(--text-info)',
+    id: 0, num: '01', title: '문제 확인', icon: '🔍',
+    color: 'var(--bg-info)', colorText: 'var(--text-info)',
     tagline: '육하원칙으로 문제를 정확하게 파악해요',
     desc: '좋은 해결책은 문제를 정확히 아는 것에서 시작해요. 육하원칙(5W1H)을 활용해 문제를 구체적으로 정리해봐요.',
     items: [
@@ -1218,127 +1099,84 @@ const SOLVE_STEPS = [
       { label: 'Why (왜)', desc: '왜 이 문제가 생기나요?', example: '예: 우산의 물기를 제거할 방법이 없어서' },
       { label: 'How (어떻게)', desc: '현재는 어떻게 대처하고 있나요?', example: '예: 우산 비닐봉투 사용, 우산꽂이 이용' }
     ],
-    tip: '💡 이 6가지 질문에 모두 답할 수 있으면 문제를 충분히 이해한 거예요!'
+    tip: '이 6가지 질문에 모두 답할 수 있으면 문제를 충분히 이해한 거예요!'
   },
   {
-    id: 1,
-    num: '02',
-    title: '정보 수집',
-    icon: '📚',
-    color: 'var(--bg-warning)',
-    colorText: 'var(--text-warning)',
+    id: 1, num: '02', title: '정보 수집', icon: '📚',
+    color: 'var(--bg-warning)', colorText: 'var(--text-warning)',
     tagline: '다양한 방법으로 관련 정보를 모아요',
     desc: '문제를 더 잘 이해하고 해결 아이디어를 찾기 위해 다양한 방법으로 정보를 수집해요.',
     items: [
-      { label: '🤖 AI 활용 (ChatGPT)', desc: 'ChatGPT나 Claude에게 문제 관련 정보를 물어보세요', example: '예: "젖은 우산 문제를 해결한 기존 제품이 있나요?" 라고 물어보기' },
-      { label: '🌐 인터넷 검색', desc: '검색엔진에서 관련 키워드로 자료를 찾아요', example: '예: "우산 물기 제거 방법", "umbrella dryer" 검색하기' },
-      { label: '🎤 인터뷰', desc: '실제로 문제를 겪는 사람들에게 직접 물어봐요', example: '예: 친구, 가족, 선생님에게 "어떤 점이 제일 불편한가요?" 인터뷰하기' },
-      { label: '👀 현장 관찰', desc: '문제가 발생하는 장소를 직접 가서 관찰해요', example: '예: 비 오는 날 학교 입구에서 사람들이 어떻게 하는지 관찰하기' }
+      { label: 'AI 활용 (ChatGPT)', desc: 'ChatGPT나 Claude에게 문제 관련 정보를 물어보세요', example: '예: 젖은 우산 문제를 해결한 기존 제품이 있나요? 라고 물어보기' },
+      { label: '인터넷 검색', desc: '검색엔진에서 관련 키워드로 자료를 찾아요', example: '예: 우산 물기 제거 방법, umbrella dryer 검색하기' },
+      { label: '인터뷰', desc: '실제로 문제를 겪는 사람들에게 직접 물어봐요', example: '예: 친구, 가족, 선생님에게 어떤 점이 제일 불편한가요? 인터뷰하기' },
+      { label: '현장 관찰', desc: '문제가 발생하는 장소를 직접 가서 관찰해요', example: '예: 비 오는 날 학교 입구에서 사람들이 어떻게 하는지 관찰하기' }
     ],
-    tip: '💡 정보를 모을 때는 노트에 기록해두세요. 나중에 아이디어를 떠올릴 때 큰 도움이 돼요!'
+    tip: '정보를 모을 때는 노트에 기록해두세요. 나중에 아이디어를 떠올릴 때 큰 도움이 돼요!'
   },
   {
-    id: 2,
-    num: '03',
-    title: '아이디어 탐색',
-    icon: '💡',
-    color: 'var(--bg-success)',
-    colorText: 'var(--text-success)',
+    id: 2, num: '03', title: '아이디어 탐색', icon: '💡',
+    color: 'var(--bg-success)', colorText: 'var(--text-success)',
     tagline: '브레인스토밍과 SCAMPER로 아이디어를 펼쳐요',
     desc: '좋은 아이디어는 많은 아이디어 중에서 나와요. 판단하지 말고 일단 최대한 많이 떠올려봐요!',
     items: [
-      { label: '🧠 브레인스토밍', desc: '떠오르는 아이디어를 무엇이든 적어요. 이상한 아이디어도 괜찮아요!', example: '규칙: ① 판단 금지 ② 양이 중요 ③ 다른 사람 아이디어에 더하기 ④ 자유롭게 상상하기' },
-      { label: 'S — Substitute (대체)', desc: '기존 재료나 방법을 다른 것으로 바꾸면?', example: '예: 흡수 스펀지 → 초극세사 패드로 대체' },
-      { label: 'C — Combine (결합)', desc: '두 가지를 합치면 어떨까요?', example: '예: 우산 + 드라이기 = 자동 건조 우산' },
-      { label: 'A — Adapt (적용)', desc: '다른 분야의 아이디어를 가져오면?', example: '예: 자동차 와이퍼 원리 → 우산에 적용' },
-      { label: 'M — Modify (변형)', desc: '크기, 모양, 색을 바꾸면?', example: '예: 우산 손잡이를 물탱크로 변형' },
-      { label: 'P — Put to other uses (다른 용도)', desc: '다른 용도로 활용하면?', example: '예: 우산 물로 화분에 물주기' },
-      { label: 'E — Eliminate (제거)', desc: '없애도 되는 부분이 있나요?', example: '예: 우산 살대를 없애고 원통형으로' },
-      { label: 'R — Reverse (역발상)', desc: '반대로 생각하면?', example: '예: 우산이 물을 막는 게 아니라 물을 모으는 우산' }
+      { label: '브레인스토밍', desc: '떠오르는 아이디어를 무엇이든 적어요. 이상한 아이디어도 괜찮아요!', example: '규칙: 판단 금지 / 양이 중요 / 다른 사람 아이디어에 더하기 / 자유롭게 상상하기' },
+      { label: 'S — 대체 (Substitute)', desc: '기존 재료나 방법을 다른 것으로 바꾸면?', example: '예: 흡수 스펀지를 초극세사 패드로 대체' },
+      { label: 'C — 결합 (Combine)', desc: '두 가지를 합치면 어떨까요?', example: '예: 우산 + 드라이기 = 자동 건조 우산' },
+      { label: 'A — 적용 (Adapt)', desc: '다른 분야의 아이디어를 가져오면?', example: '예: 자동차 와이퍼 원리를 우산에 적용' },
+      { label: 'M — 변형 (Modify)', desc: '크기, 모양, 색을 바꾸면?', example: '예: 우산 손잡이를 물탱크로 변형' },
+      { label: 'P — 다른 용도 (Put to other uses)', desc: '다른 용도로 활용하면?', example: '예: 우산 물로 화분에 물주기' },
+      { label: 'E — 제거 (Eliminate)', desc: '없애도 되는 부분이 있나요?', example: '예: 우산 살대를 없애고 원통형으로' },
+      { label: 'R — 역발상 (Reverse)', desc: '반대로 생각하면?', example: '예: 물을 막는 우산이 아니라 물을 모으는 우산' }
     ],
-    tip: '💡 SCAMPER 기법은 각 글자의 첫 글자를 딴 창의적 사고 도구예요. 우리 앱 아이디어 생성 기능도 이 방법을 써요!'
+    tip: 'SCAMPER 기법은 각 글자의 첫 글자를 딴 창의적 사고 도구예요. 아이디어 탭에서도 이 방법을 쓰고 있어요!'
   },
   {
-    id: 3,
-    num: '04',
-    title: '아이디어 선정',
-    icon: '🎯',
-    color: '#f0eafd',
-    colorText: '#5a38b5',
+    id: 3, num: '04', title: '아이디어 선정', icon: '🎯',
+    color: '#f0eafd', colorText: '#5a38b5',
     tagline: '평가행렬법과 PMI 기법으로 최선의 아이디어를 골라요',
     desc: '여러 아이디어 중에서 가장 좋은 것을 논리적으로 선택하는 방법이에요.',
     items: [
-      { label: '📊 평가행렬법', desc: '여러 기준으로 아이디어를 점수로 평가해서 비교해요', example: '기준 예시: 실현 가능성(5점) + 창의성(5점) + 비용(5점) + 효과(5점) = 20점 만점으로 아이디어마다 점수 매기기' },
-      { label: '➕ P (Plus, 장점)', desc: 'PMI 기법 — 이 아이디어의 좋은 점은 무엇인가요?', example: '예: 친환경적이다, 비용이 낮다, 사용이 간편하다' },
-      { label: '➖ M (Minus, 단점)', desc: 'PMI 기법 — 이 아이디어의 나쁜 점은 무엇인가요?', example: '예: 크기가 크다, 물이 새를 수 있다, 세척이 어렵다' },
-      { label: '❓ I (Interesting, 흥미로운 점)', desc: 'PMI 기법 — 이 아이디어에서 흥미롭거나 가능성 있는 점은?', example: '예: 빗물을 재활용할 수 있다, 새로운 비즈니스 모델이 될 수 있다' }
+      { label: '평가행렬법', desc: '여러 기준으로 아이디어를 점수로 평가해서 비교해요', example: '기준 예시: 실현 가능성(5점) + 창의성(5점) + 비용(5점) + 효과(5점) = 20점 만점으로 아이디어마다 점수 매기기' },
+      { label: 'P — Plus (장점)', desc: 'PMI 기법 — 이 아이디어의 좋은 점은 무엇인가요?', example: '예: 친환경적이다, 비용이 낮다, 사용이 간편하다' },
+      { label: 'M — Minus (단점)', desc: 'PMI 기법 — 이 아이디어의 나쁜 점은 무엇인가요?', example: '예: 크기가 크다, 물이 샐 수 있다, 세척이 어렵다' },
+      { label: 'I — Interesting (흥미로운 점)', desc: 'PMI 기법 — 이 아이디어에서 흥미롭거나 가능성 있는 점은?', example: '예: 빗물을 재활용할 수 있다, 새로운 비즈니스 모델이 될 수 있다' }
     ],
-    tip: '💡 두 방법을 함께 써보세요. 평가행렬법으로 점수를 매기고, 1~2위 아이디어를 PMI로 깊이 분석해봐요!'
+    tip: '두 방법을 함께 써보세요. 평가행렬법으로 점수를 매기고, 1~2위 아이디어를 PMI로 깊이 분석해봐요!'
   },
   {
-    id: 4,
-    num: '05',
-    title: '아이디어 구체화',
-    icon: '✏️',
-    color: 'var(--bg-secondary)',
-    colorText: 'var(--text-secondary)',
+    id: 4, num: '05', title: '아이디어 구체화', icon: '✏️',
+    color: 'var(--bg-secondary)', colorText: 'var(--text-secondary)',
     tagline: '도면을 그려서 아이디어를 눈에 보이게 만들어요',
     desc: '머릿속 아이디어를 그림으로 그리면 문제점을 미리 발견하고 더 구체적으로 발전시킬 수 있어요.',
     items: [
-      { label: '📐 발명 도면 그리기', desc: '아이디어의 전체 모습을 여러 각도에서 그려요', example: '① 정면도: 앞에서 본 모습
-② 측면도: 옆에서 본 모습
-③ 평면도: 위에서 본 모습
-④ 사시도: 비스듬하게 본 전체 모습' },
-      { label: '🔢 부품 번호 매기기', desc: '각 부분에 번호를 붙이고 설명을 적어요', example: '예: (1) 원형 링 본체, (2) 흡수 패드, (3) 물받이 수조, (4) 교체형 카트리지' },
-      { label: '📏 크기와 재료 적기', desc: '실제 크기와 어떤 재료로 만들지 적어요', example: '예: 직경 15cm, 두께 3cm, 재료: ABS 플라스틱 + 마이크로파이버' },
-      { label: '⚙️ 작동 원리 표시', desc: '화살표를 이용해 어떻게 작동하는지 흐름을 표시해요', example: '예: 우산 삽입 → 패드가 물 흡수 → 물이 수조로 이동 → 수조 비우기' }
+      { label: '발명 도면 그리기', desc: '아이디어의 전체 모습을 여러 각도에서 그려요', example: '정면도: 앞에서 본 모습 / 측면도: 옆에서 본 모습 / 평면도: 위에서 본 모습 / 사시도: 비스듬하게 본 전체 모습' },
+      { label: '부품 번호 매기기', desc: '각 부분에 번호를 붙이고 설명을 적어요', example: '예: (1) 원형 링 본체, (2) 흡수 패드, (3) 물받이 수조, (4) 교체형 카트리지' },
+      { label: '크기와 재료 적기', desc: '실제 크기와 어떤 재료로 만들지 적어요', example: '예: 직경 15cm, 두께 3cm, 재료: ABS 플라스틱 + 마이크로파이버' },
+      { label: '작동 원리 표시', desc: '화살표를 이용해 어떻게 작동하는지 흐름을 표시해요', example: '우산 삽입 → 패드가 물 흡수 → 물이 수조로 이동 → 수조 비우기' }
     ],
-    tip: '💡 잘 그리지 않아도 괜찮아요! 중요한 건 아이디어가 어떻게 작동하는지 알 수 있게 표현하는 거예요.'
+    tip: '잘 그리지 않아도 괜찮아요! 중요한 건 아이디어가 어떻게 작동하는지 알 수 있게 표현하는 거예요.'
   },
   {
-    id: 5,
-    num: '06',
-    title: '실행 및 평가',
-    icon: '🛠️',
-    color: '#fde8ea',
-    colorText: '#a32d3a',
+    id: 5, num: '06', title: '실행 및 평가', icon: '🛠️',
+    color: '#fde8ea', colorText: '#a32d3a',
     tagline: '직접 만들고, 과정과 결과를 모두 평가해요',
     desc: '아이디어를 실제로 만들어보고, 잘된 점과 개선할 점을 꼼꼼히 평가해요.',
     items: [
-      { label: '🔨 프로토타입 만들기', desc: '실제로 작동하는 시제품을 만들어봐요', example: '예: 종이, 상자, 스펀지, 클레이, 3D 프린터 등 주변 재료 활용
-→ 완벽하지 않아도 괜찮아요! 일단 만들어보는 게 중요해요' },
-      { label: '✅ 결과 평가', desc: '만들어진 제품이 문제를 잘 해결하는지 평가해요', example: '평가 항목:
-• 원래 문제를 해결했나요?
-• 사용하기 편리한가요?
-• 안전한가요?
-• 원하는 대로 작동하나요?' },
-      { label: '📝 과정 평가', desc: '만드는 과정에서 무엇을 배웠는지 평가해요', example: '평가 항목:
-• 계획대로 진행했나요?
-• 문제가 생겼을 때 어떻게 해결했나요?
-• 팀원과 잘 협력했나요?
-• 다음엔 무엇을 더 잘할 수 있을까요?' },
-      { label: '🔄 개선하기', desc: '평가 결과를 바탕으로 더 좋게 만들어요', example: '발명은 한 번에 완성되지 않아요!
-평가 → 개선 → 다시 테스트 → 다시 개선
-이 과정을 반복하면 더 좋은 발명이 완성돼요' }
+      { label: '프로토타입 만들기', desc: '실제로 작동하는 시제품을 만들어봐요', example: '예: 종이, 상자, 스펀지, 클레이, 3D 프린터 등 주변 재료 활용 / 완벽하지 않아도 일단 만들어보는 게 중요해요!' },
+      { label: '결과 평가', desc: '만들어진 제품이 문제를 잘 해결하는지 평가해요', example: '원래 문제를 해결했나요? / 사용하기 편리한가요? / 안전한가요? / 원하는 대로 작동하나요?' },
+      { label: '과정 평가', desc: '만드는 과정에서 무엇을 배웠는지 평가해요', example: '계획대로 진행했나요? / 문제가 생겼을 때 어떻게 해결했나요? / 팀원과 잘 협력했나요? / 다음엔 무엇을 더 잘할 수 있을까요?' },
+      { label: '개선하기', desc: '평가 결과를 바탕으로 더 좋게 만들어요', example: '발명은 한 번에 완성되지 않아요! 평가 → 개선 → 다시 테스트 → 다시 개선 이 과정을 반복하면 더 좋은 발명이 완성돼요.' }
     ],
-    tip: '💡 과정 평가가 결과 평가만큼 중요해요! 실패에서 배운 것이 나중에 더 큰 발명으로 이어질 수 있어요.'
+    tip: '과정 평가가 결과 평가만큼 중요해요! 실패에서 배운 것이 나중에 더 큰 발명으로 이어질 수 있어요.'
   }
 ];
 
 function renderSolveSteps() {
   const nav = document.getElementById('solve-steps-nav');
+  if (!nav) return;
   nav.innerHTML = SOLVE_STEPS.map(s => `
-    <div onclick="openSolveDetail(${s.id})" style="
-      background:var(--bg);
-      border:0.5px solid var(--border);
-      border-radius:var(--radius-lg);
-      padding:1rem 1.25rem;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:1rem;
-      transition:border-color .15s;
-    " onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div onclick="openSolveDetail(${s.id})" style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;cursor:pointer;display:flex;align-items:center;gap:1rem;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--border-strong)'" onmouseout="this.style.borderColor='var(--border)'">
       <div style="width:44px;height:44px;border-radius:var(--radius-md);background:${s.color};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${s.icon}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.2rem">
@@ -1370,14 +1208,14 @@ function openSolveDetail(id) {
         <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem">
           <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:.4rem">${item.label}</div>
           <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:.5rem">${item.desc}</div>
-          <div style="font-size:12px;color:var(--text-tertiary);background:var(--bg-secondary);border-radius:var(--radius-md);padding:.625rem .875rem;line-height:1.7;white-space:pre-line">${item.example}</div>
+          <div style="font-size:12px;color:var(--text-tertiary);background:var(--bg-secondary);border-radius:var(--radius-md);padding:.625rem .875rem;line-height:1.7">${item.example}</div>
         </div>
       `).join('')}
     </div>
-    <div style="background:${s.color};border-radius:var(--radius-md);padding:.875rem 1rem;font-size:13px;color:${s.colorText};line-height:1.6;margin-bottom:1rem">${s.tip}</div>
+    <div style="background:${s.color};border-radius:var(--radius-md);padding:.875rem 1rem;font-size:13px;color:${s.colorText};line-height:1.6;margin-bottom:1rem">💡 ${s.tip}</div>
     <div style="display:flex;gap:.625rem">
       ${id > 0 ? `<button class="btn btn-ghost" onclick="openSolveDetail(${id-1})" style="flex:1">← ${SOLVE_STEPS[id-1].title}</button>` : '<div style="flex:1"></div>'}
-      ${id < SOLVE_STEPS.length-1 ? `<button class="btn btn-primary" onclick="openSolveDetail(${id+1})" style="flex:1">${SOLVE_STEPS[id+1].title} →</button>` : '<button class="btn btn-primary" onclick="closeSolveDetail()" style="flex:1">✓ 완료!</button>'}
+      ${id < SOLVE_STEPS.length-1 ? `<button class="btn btn-primary" onclick="openSolveDetail(${id+1})" style="flex:1">${SOLVE_STEPS[id+1].title} →</button>` : '<button class="btn btn-primary" onclick="closeSolveDetail()" style="flex:1">완료!</button>'}
     </div>
   `;
   document.getElementById('solve-steps-nav').style.display = 'none';
@@ -1390,8 +1228,9 @@ function closeSolveDetail() {
   document.getElementById('solve-detail').style.display = 'none';
 }
 
-document.addEventListener('DOMContentLoaded', renderSolveSteps);
-
+document.addEventListener('DOMContentLoaded', function() {
+  renderSolveSteps();
+});
 </script>
 </body>
 </html>
