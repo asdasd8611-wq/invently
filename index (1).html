@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invently — AI 발명 파트너</title>
+<meta name="description" content="불편함 한 줄을 발명 아이디어로 바꿔주는 AI 발명 파트너">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f7f7f5;
+    --bg-tertiary: #f0f0ec;
+    --bg-info: #e8f0fb;
+    --bg-success: #eaf5ee;
+    --bg-warning: #fdf4e3;
+    --bg-danger: #fceaea;
+    --text: #1a1a18;
+    --text-secondary: #5a5a56;
+    --text-tertiary: #9a9a94;
+    --text-info: #1a4fa0;
+    --text-success: #1a6b32;
+    --text-warning: #7a4d0a;
+    --text-danger: #9a1f1f;
+    --border: rgba(0,0,0,0.10);
+    --border-med: rgba(0,0,0,0.18);
+    --border-strong: rgba(0,0,0,0.28);
+    --border-info: #3b7de0;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-secondary: #242422;
+      --bg-tertiary: #2a2a28;
+      --bg-info: #0e2040;
+      --bg-success: #0e2818;
+      --bg-warning: #2a1e08;
+      --bg-danger: #2a0e0e;
+      --text: #f0f0ec;
+      --text-secondary: #a8a8a0;
+      --text-tertiary: #686860;
+      --text-info: #7eb0f8;
+      --text-success: #6ed68e;
+      --text-warning: #f0b84a;
+      --text-danger: #f07070;
+      --border: rgba(255,255,255,0.10);
+      --border-med: rgba(255,255,255,0.18);
+      --border-strong: rgba(255,255,255,0.28);
+      --border-info: #4a8af0;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-tertiary);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 1.5rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-brand {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .nav-brand span { color: var(--text-tertiary); font-weight: 400; }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: var(--font);
+    transition: all 0.15s;
+  }
+  .nav-tab:hover { background: var(--bg-secondary); color: var(--text); }
+  .nav-tab.active { background: var(--text); color: var(--bg); }
+
+  /* PAGES */
+  .page { display: none; max-width: 640px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 3rem 0 2.5rem; }
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-info);
+    background: var(--bg-info);
+    border-radius: 20px;
+    padding: 4px 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .hero h1 { font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+  .hero p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+
+  /* CARD */
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .card-body { padding: 1.25rem; }
+
+  /* FORM ELEMENTS */
+  .field-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+    margin-top: 1rem;
+  }
+  .field-label:first-child { margin-top: 0; }
+  textarea, input[type="text"] {
+    width: 100%;
+    border: 0.5px solid var(--border-med);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    resize: vertical;
+    line-height: 1.6;
+    transition: border-color 0.15s;
+  }
+  textarea:focus, input[type="text"]:focus { border-color: var(--border-strong); }
+  textarea::placeholder, input[type="text"]::placeholder { color: var(--text-tertiary); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-block { width: 100%; }
+  .btn-primary { background: var(--text); color: var(--bg); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 0.5px solid var(--border-med);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-strong); }
+  .btn-ai {
+    font-size: 12px;
+    padding: 6px 12px;
+    background: var(--bg-info);
+    color: var(--text-info);
+    border: none;
+    border-radius: 20px;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: opacity 0.15s;
+  }
+  .btn-ai:hover { opacity: 0.8; }
+  .btn-ai:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 8px; margin-top: 1rem; }
+  .btn-row .btn-primary { flex: 1; }
+
+  /* EXAMPLES */
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.25rem; }
+  .example-chip {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font);
+  }
+  .example-chip:hover { border-color: var(--border-strong); color: var(--text); }
+
+  /* HINT BOX */
+  .hint-box {
+    background: var(--bg-info);
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .hint-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-info);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.4rem;
+  }
+  .hint-list { list-style: none; }
+  .hint-list li {
+    font-size: 13px;
+    color: var(--text-info);
+    line-height: 1.5;
+    padding: 0.2rem 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .hint-list li::before { content: "→"; flex-shrink: 0; opacity: 0.6; }
+
+  /* AI RESULT */
+  .ai-result {
+    margin-top: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1rem;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    display: none;
+    white-space: pre-wrap;
+  }
+  .ai-result.show { display: block; }
+
+  /* IDEA CARDS */
+  .idea-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.125rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 0.75rem;
+  }
+  .idea-card:hover { border-color: var(--border-med); }
+  .idea-card.selected { border: 2px solid var(--border-info); }
+  .idea-num { font-size: 11px; font-weight: 500; color: var(--text-tertiary); margin-bottom: 0.3rem; }
+  .idea-name { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+  .idea-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem; }
+  .scores { display: flex; flex-wrap: wrap; gap: 8px; }
+  .score-badge {
+    font-size: 11px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .score-badge strong { color: var(--text); font-weight: 500; }
+
+  /* ANALYSIS */
+  .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .analysis-item {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1rem;
+  }
+  .analysis-item-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+  .analysis-item-value { font-size: 14px; color: var(--text); line-height: 1.5; }
+
+  /* PROGRESS */
+  .progress-wrap { background: var(--bg-secondary); border-radius: 20px; height: 4px; margin-bottom: 0.4rem; overflow: hidden; }
+  .progress-bar { height: 4px; border-radius: 20px; background: var(--text); transition: width 0.4s ease; }
+  .progress-label { font-size: 12px; color: var(--text-tertiary); text-align: right; margin-bottom: 1.25rem; }
+
+  /* SECTION CARD */
+  .section-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; }
+  .section-header {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .section-header:hover { background: var(--bg-secondary); }
+  .section-header-left { display: flex; align-items: center; gap: 10px; }
+  .section-num {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+  .section-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .status-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .status-empty { background: var(--bg-secondary); color: var(--text-tertiary); }
+  .status-done { background: var(--bg-success); color: var(--text-success); }
+  .section-body { padding: 1.25rem; display: none; }
+  .section-body.open { display: block; }
+
+  /* CLAIM */
+  .claim-row { display: flex; gap: 8px; margin-bottom: 0.5rem; align-items: flex-start; }
+  .claim-label { font-size: 13px; color: var(--text-secondary); min-width: 52px; padding-top: 12px; flex-shrink: 0; }
+  .claim-remove { background: none; border: none; color: var(--text-tertiary); cursor: pointer; font-size: 18px; padding: 8px 4px; line-height: 1; }
+  .claim-remove:hover { color: var(--text-danger); }
+  .btn-add-claim {
+    width: 100%;
+    padding: 8px;
+    background: none;
+    border: 0.5px dashed var(--border-med);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font);
+    margin-top: 0.25rem;
+    transition: all 0.15s;
+  }
+  .btn-add-claim:hover { color: var(--text); border-color: var(--border-strong); }
+
+  /* PREVIEW */
+  .preview-section { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .preview-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .preview-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+  .preview-value { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 3.5rem 0; }
+  .dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 1rem; }
+  .dot { width: 8px; height: 8px; background: var(--text-tertiary); border-radius: 50%; animation: pulse 1.2s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } }
+  .loading-text { font-size: 15px; color: var(--text-secondary); }
+
+  /* ERROR */
+  .error-box {
+    background: var(--bg-danger);
+    border: 0.5px solid var(--text-danger);
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1rem;
+    color: var(--text-danger);
+    font-size: 13px;
+    margin-bottom: 0.75rem;
+    display: none;
+  }
+
+  /* DETAIL */
+  .detail-label { font-size: 11px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; margin-top: 1.125rem; }
+  .detail-label:first-child { margin-top: 0; }
+  .detail-value { font-size: 14px; color: var(--text); line-height: 1.7; }
+  .detail-value ul { padding-left: 1.2rem; }
+  .detail-value li { margin-bottom: 0.25rem; }
+  .card-header-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 0.5px solid var(--border); }
+  .card-tag { font-size: 11px; background: var(--bg-info); color: var(--text-info); padding: 3px 10px; border-radius: 20px; white-space: nowrap; margin-top: 2px; }
+
+  .char-info { font-size: 11px; color: var(--text-tertiary); text-align: right; margin-top: 0.3rem; }
+  .tip { font-size: 12px; color: var(--text-tertiary); margin-top: 0.5rem; line-height: 1.5; }
+
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 22px; }
+    .analysis-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .nav-tab { padding: 5px 9px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Invently <span>AI 발명 파트너</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPage('idea')">아이디어</button>
+    <button class="nav-tab" onclick="switchPage('patent')">특허 명세서</button>
+  </div>
+</nav>
+
+<!-- ===== 아이디어 생성 페이지 ===== -->
+<div class="page active" id="page-idea">
+
+  <!-- 입력 화면 -->
+  <div id="idea-input">
+    <div class="hero">
+      <div class="hero-badge">AI 발명 파트너</div>
+      <h1>오늘 어떤 게<br>불편했나요?</h1>
+      <p>불편함 한 줄이 발명 아이디어 5개로 바뀝니다</p>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <textarea id="problem-input" rows="4" placeholder="예: 우산을 쓰고 건물에 들어가면 바닥에 물이 떨어져서 불편해요..." maxlength="500" oninput="updateIdeaBtn()"></textarea>
+        <div class="char-info"><span id="idea-char">0</span>/500</div>
+      </div>
+    </div>
+    <div class="examples">
+      <button class="example-chip" onclick="setExample(this)">☔ 젖은 우산</button>
+      <button class="example-chip" onclick="setExample(this)">🎧 이어폰 줄 엉킴</button>
+      <button class="example-chip" onclick="setExample(this)">🚗 주차 공간 찾기</button>
+      <button class="example-chip" onclick="setExample(this)">💊 약 먹는 시간</button>
+      <button class="example-chip" onclick="setExample(this)">📦 택배 박스 버리기</button>
+    </div>
+    <button class="btn btn-primary btn-block" id="idea-btn" onclick="generateIdeas()" disabled>아이디어 만들기 →</button>
+  </div>
+
+  <!-- 로딩 -->
+  <div id="idea-loading" style="display:none">
+    <div class="loading">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="loading-text" id="idea-loading-text">문제를 분석하고 있어요...</div>
+    </div>
+  </div>
+
+  <!-- 아이디어 목록 -->
+  <div id="idea-results" style="display:none">
+    <div style="margin-bottom:1.5rem">
+      <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">분석 결과</div>
+      <div class="card">
+        <div class="card-body" style="padding:.875rem 1.25rem">
+          <div style="font-size:13px;font-weight:500;color:var(--text-tertiary);margin-bottom:.3rem">핵심 문제</div>
+          <div style="font-size:14px;color:var(--text)" id="core-problem">—</div>
+        </div>
+      </div>
+      <div class="analysis-grid">
+        <div class="analysis-item">
+          <div class="analysis-item-label">불편한 사람</div>
+          <div class="analysis-item-value" id="target-user">—</div>
+        </div>
+        <div class="analysis-item">
+          <div class="analysis-item-label">발생 상황</div>
+          <div class="analysis-item-value" id="situation">—</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">발명 아이디어 5개 · 마음에 드는 것을 선택하세요</div>
+    <div id="ideas-list"></div>
+    <div class="error-box" id="idea-error"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="develop-btn" onclick="developIdea()" disabled>선택한 아이디어 발전시키기 →</button>
+      <button class="btn btn-ghost" onclick="resetIdea()">다시 쓰기</button>
+    </div>
+  </div>
+
+  <!-- 발명 카드 상세 -->
+  <div id="idea-detail" style="display:none">
+    <div style="margin-bottom:1rem">
+      <button class="btn btn-ghost" onclick="showIdeaResults()" style="padding:7px 14px;font-size:13px">← 아이디어 목록</button>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">발명 카드</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-header-row">
+          <div>
+            <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:3px" id="detail-name">—</div>
+            <div style="font-size:13px;color:var(--text-secondary)" id="detail-tagline"></div>
+          </div>
+          <div class="card-tag">발명 카드</div>
+        </div>
+        <div id="detail-body"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="switchPage('patent')">📄 이 아이디어로 특허 명세서 작성 →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== 특허 명세서 페이지 ===== -->
+<div class="page" id="page-patent">
+
+  <!-- 시작 화면 -->
+  <div id="patent-start">
+    <div class="hero">
+      <div class="hero-badge">특허 명세서</div>
+      <h1>발명 아이디어를<br>특허로 만들어요</h1>
+      <p>AI가 질문을 던집니다. 직접 답하면서 채워나가다 보면<br>실제 특허 출원에 쓸 수 있는 명세서가 완성됩니다.</p>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="field-label">발명의 이름</div>
+        <input type="text" id="inv-title" placeholder="예: 드라이링 우산 건조 장치" oninput="checkPatentStart()">
+        <div class="tip">기술적인 이름이 좋아요. 상품명보다는 무엇을 하는 장치인지 나타내도록 써보세요.</div>
+        <div class="field-label">발명자 이름</div>
+        <input type="text" id="inv-author" placeholder="예: 홍길동" oninput="checkPatentStart()">
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block" id="patent-start-btn" onclick="startPatent()" disabled>명세서 작성 시작하기 →</button>
+  </div>
+
+  <!-- 작성 화면 -->
+  <div id="patent-write" style="display:none">
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:1rem" id="patent-title-display"></div>
+      <div class="progress-wrap"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+      <div class="progress-label" id="prog-label">0 / 6 섹션 완료</div>
+    </div>
+
+    <!-- 섹션 01 -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSec(0)">
+        <div class="section-header-left">
+          <span class="section-num">01</span>
+          <span class="section-title">발명의 배경</span>
+        </div>
+        <span class="status-badge status-empty" id="s-status-0">미작성</span>
+      </div>
+      <div class="section-body" id="s-body-0">
+        <div class="hint-box">
+          <div class="hint-label">💡 이렇게 생각해보세요</div>
+          <ul class="hint-list">
+            <li>지금 이 문제가 왜 존재할까요? 언제부터 생긴 문제인가요?</li>
+            <li>지금 사람들은 이 문제를 어떻게 해결하고 있나요?</li>
+            <li>그 해결 방법의 어떤 점이 여전히 불편한가요?</li>
+          </ul>
+        </div>
+        <div class="field-label">기술 분야</div>
+        <textarea id="f-bg-field" rows="2" placeholder="예: 본 발명은 우산의 물기를 제거하는 생활용품에 관한 것이다." oninput="onSec(0)"></textarea>
+        <div class="field-label">기존 기술의 문제점</div>
+        <textarea id="f-bg-problem" rows="4" placeholder="예: 기존에는 우산 비닐봉투나 우산꽂이를 이용해왔다. 그러나 비닐봉투는 쓰레기를 발생시키고, 우산꽂이는 입구에만 설치되어 이동 중 물이 떨어지는 문제를 해결하지 못한다." oninput="onSec(0)"></textarea>
+        <button class="btn-ai" onclick="askAI(0)" id="ai-btn-0">✦ AI에게 힌트 질문받기</button>
+        <div class="ai-result" id="ai-r-0"></div>
+      </div>
+    </div>
+
+    <!-- 섹션 02 -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSec(1)">
+        <div class="section-header-left">
+          <span class="section-num">02</span>
+          <span class="section-title">발명이 해결하는 문제</span>
+        </div>
+        <span class="status-badge status-empty" id="s-status-1">미작성</span>
+      </div>
+      <div class="section-body" id="s-body-1">
+        <div class="hint-box">
+          <div class="hint-label">💡 이렇게 생각해보세요</div>
+          <ul class="hint-list">
+            <li>내 발명이 해결하는 문제를 딱 한 문장으로 말할 수 있나요?</li>
+            <li>"~하는 문제를 해결하기 위한 발명"이라고 써보세요.</li>
+            <li>기존 방법이 왜 충분하지 않은지 명확히 말해보세요.</li>
+          </ul>
+        </div>
+        <div class="field-label">발명이 해결하려는 과제</div>
+        <textarea id="f-obj" rows="4" placeholder="예: 본 발명은 우산을 들고 실내로 이동할 때 물이 바닥에 떨어지는 문제를 해결하고, 일회용 비닐봉투 없이도 물기를 효과적으로 제거할 수 있는 장치를 제공하는 것을 목적으로 한다." oninput="onSec(1)"></textarea>
+        <button class="btn-ai" onclick="askAI(1)" id="ai-btn-1">✦ AI에게 힌트 질문받기</button>
+        <div class="ai-result" id="ai-r-1"></div>
+      </div>
+    </div>
+
+    <!-- 섹션 03 -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSec(2)">
+        <div class="section-header-left">
+          <span class="section-num">03</span>
+          <span class="section-title">발명의 구성 및 작동 원리</span>
+        </div>
+        <span class="status-badge status-empty" id="s-status-2">미작성</span>
+      </div>
+      <div class="section-body" id="s-body-2">
+        <div class="hint-box">
+          <div class="hint-label">💡 이렇게 생각해보세요</div>
+          <ul class="hint-list">
+            <li>내 발명은 어떤 부품들로 이루어져 있나요? 각각 무슨 역할을 하나요?</li>
+            <li>사용자가 처음부터 끝까지 어떻게 사용하나요? 순서대로 설명해보세요.</li>
+            <li>가장 핵심이 되는 부분은 어디인가요? 그게 왜 중요한가요?</li>
+          </ul>
+        </div>
+        <div class="field-label">구성 요소 (부품 목록)</div>
+        <textarea id="f-struct" rows="3" placeholder="예: 본 발명은 원형 링 형태의 본체(10), 내부에 배치된 흡수 패드(20), 물을 모아두는 하단 수조(30), 교체 가능한 카트리지(40)로 구성된다." oninput="onSec(2)"></textarea>
+        <div class="field-label">작동 방법 (순서대로)</div>
+        <textarea id="f-action" rows="4" placeholder="예: 사용자는 우산을 접은 후 장치의 원형 링에 우산 끝을 넣고 위에서 아래로 통과시킨다. 흡수 패드가 우산 표면의 물기를 흡수하고, 제거된 물은 하단 수조에 모인다." oninput="onSec(2)"></textarea>
+        <button class="btn-ai" onclick="askAI(2)" id="ai-btn-2">✦ AI에게 힌트 질문받기</button>
+        <div class="ai-result" id="ai-r-2"></div>
+      </div>
+    </div>
+
+    <!-- 섹션 04 -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSec(3)">
+        <div class="section-header-left">
+          <span class="section-num">04</span>
+          <span class="section-title">청구항 (특허의 핵심)</span>
+        </div>
+        <span class="status-badge status-empty" id="s-status-3">미작성</span>
+      </div>
+      <div class="section-body" id="s-body-3">
+        <div class="hint-box">
+          <div class="hint-label">💡 청구항이란?</div>
+          <ul class="hint-list">
+            <li>특허로 보호받을 내용을 딱 잘라 말하는 문장입니다. 가장 중요한 부분이에요.</li>
+            <li>청구항 1: 내 발명의 핵심 구조 → "~를 포함하는 ~장치"로 써보세요.</li>
+            <li>청구항 2 이상: 추가 특징이나 세부 옵션을 하나씩 더해보세요.</li>
+          </ul>
+        </div>
+        <div style="font-size:12px;color:var(--text-tertiary);margin-bottom:.5rem" id="claim-count">청구항 1개</div>
+        <div id="claims-list"></div>
+        <button class="btn-add-claim" onclick="addClaim()">+ 청구항 추가하기</button>
+        <button class="btn-ai" onclick="askAI(3)" id="ai-btn-3" style="margin-top:.75rem">✦ AI에게 힌트 질문받기</button>
+        <div class="ai-result" id="ai-r-3"></div>
+      </div>
+    </div>
+
+    <!-- 섹션 05 -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSec(4)">
+        <div class="section-header-left">
+          <span class="section-num">05</span>
+          <span class="section-title">발명의 효과</span>
+        </div>
+        <span class="status-badge status-empty" id="s-status-4">미작성</span>
+      </div>
+      <div class="section-body" id="s-body-4">
+        <div class="hint-box">
+          <div class="hint-label">💡 이렇게 생각해보세요</div>
+          <ul class="hint-list">
+            <li>내 발명이 있으면 무엇이 달라지나요? 누가 가장 편해지나요?</li>
+            <li>경제적 효과: 돈이 절약되거나 더 벌 수 있나요?</li>
+            <li>환경적 효과: 자원을 아끼거나 쓰레기를 줄일 수 있나요?</li>
+            <li>사회적 효과: 안전이나 편의에 어떻게 기여하나요?</li>
+          </ul>
+        </div>
+        <div class="field-label">기대 효과</div>
+        <textarea id="f-effect" rows="4" placeholder="예: 본 발명을 사용하면 이동 중 우산에서 물이 떨어지지 않아 미끄럼 사고를 예방할 수 있다. 일회용 우산 비닐봉투 사용이 줄어 환경오염을 감소시키며, 바닥 청소 비용도 절약할 수 있다." oninput="onSec(4)"></textarea>
+        <button class="btn-ai" onclick="askAI(4)" id="ai-btn-4">✦ AI에게 힌트 질문받기</button>
+        <div class="ai-result" id="ai-r-4"></div>
+      </div>
+    </div>
+
+    <!-- 섹션 06 -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSec(5)">
+        <div class="section-header-left">
+          <span class="section-num">06</span>
+          <span class="section-title">요약 (Abstract)</span>
+        </div>
+        <span class="status-badge status-empty" id="s-status-5">미작성</span>
+      </div>
+      <div class="section-body" id="s-body-5">
+        <div class="hint-box">
+          <div class="hint-label">💡 이렇게 생각해보세요</div>
+          <ul class="hint-list">
+            <li>처음 보는 사람에게 내 발명을 3문장으로 설명한다면?</li>
+            <li>어떤 문제를 → 어떤 방법으로 → 어떤 효과를 내는지 담아보세요.</li>
+            <li>150~300자 정도가 적당해요.</li>
+          </ul>
+        </div>
+        <div class="field-label">발명 요약</div>
+        <textarea id="f-abstract" rows="5" placeholder="예: 본 발명은 젖은 우산의 물기를 실내 이동 중에도 효과적으로 제거하는 휴대용 우산 건조 장치에 관한 것이다. 원형 링 형태의 본체에 흡수 패드를 내장하여 우산을 통과시키는 것만으로 물기를 제거할 수 있다." oninput="onSec(5)"></textarea>
+        <div class="char-info" id="abstract-char">0자</div>
+        <button class="btn-ai" onclick="askAI(5)" id="ai-btn-5">✦ AI에게 힌트 질문받기</button>
+        <div class="ai-result" id="ai-r-5"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goPreview()">명세서 완성 미리보기 →</button>
+      <button class="btn btn-ghost" onclick="resetPatent()">처음으로</button>
+    </div>
+  </div>
+
+  <!-- 미리보기 -->
+  <div id="patent-preview" style="display:none">
+    <div style="margin-bottom:1rem">
+      <button class="btn btn-ghost" onclick="showPatentWrite()" style="padding:7px 14px;font-size:13px">← 수정하기</button>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">완성된 특허 명세서</div>
+    <div style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:1.25rem" id="preview-h"></div>
+    <div class="card">
+      <div class="card-body" id="preview-body"></div>
+    </div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn btn-primary" onclick="copySpec()">📋 명세서 복사하기</button>
+      <button class="btn btn-ghost" onclick="showPatentWrite()">← 수정하기</button>
+    </div>
+    <div style="font-size:12px;color:var(--text-tertiary);margin-top:.75rem;text-align:center">※ 이 명세서는 특허 출원 상담용 초안입니다. 실제 출원 시 변리사 검토를 받으세요.</div>
+  </div>
+
+</div>
+
+<script>
+// ===== 상수 =====
+const EXAMPLES = {
+  '☔ 젖은 우산': '우산을 쓰고 건물에 들어가면 바닥에 물이 떨어져서 불편해요. 다른 사람들도 미끄러질 수 있고 청소도 힘들어요.',
+  '🎧 이어폰 줄 엉킴': '가방에 이어폰을 넣으면 항상 줄이 엉켜있어서 꺼낼 때마다 풀어야 해요. 시간도 걸리고 짜증나요.',
+  '🚗 주차 공간 찾기': '대형 쇼핑몰에서 빈 주차 자리를 찾으러 몇 바퀴씩 돌아야 해서 시간 낭비가 심해요.',
+  '💊 약 먹는 시간': '약을 하루 세 번 먹어야 하는데 중간에 먹었는지 안 먹었는지 헷갈려서 불편해요.',
+  '📦 택배 박스 버리기': '택배가 오면 박스를 접고 테이프를 뜯어서 버려야 하는데 귀찮고 부피도 너무 커요.'
+};
+
+// ===== 페이지 전환 =====
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab')[id === 'idea' ? 0 : 1].classList.add('active');
+}
+
+// ===== 아이디어 생성 =====
+let selectedIdx = null;
+let ideasData = [];
+let problemText = '';
+
+function setExample(btn) {
+  const key = btn.textContent.trim();
+  document.getElementById('problem-input').value = EXAMPLES[key] || '';
+  updateIdeaBtn();
+}
+
+function updateIdeaBtn() {
+  const v = document.getElementById('problem-input').value;
+  document.getElementById('idea-char').textContent = v.length;
+  document.getElementById('idea-btn').disabled = v.trim().length < 10;
+}
+
+function showEl(id) { document.getElementById(id).style.display = 'block'; }
+function hideEl(id) { document.getElementById(id).style.display = 'none'; }
+
+function showIdeaResults() {
+  hideEl('idea-input'); hideEl('idea-loading'); hideEl('idea-detail');
+  showEl('idea-results');
+}
+
+function resetIdea() {
+  hideEl('idea-results'); hideEl('idea-detail'); hideEl('idea-loading');
+  showEl('idea-input');
+  selectedIdx = null;
+  document.getElementById('develop-btn').disabled = true;
+}
+
+async function generateIdeas() {
+  problemText = document.getElementById('problem-input').value.trim();
+  if (!problemText) return;
+  hideEl('idea-input');
+  showEl('idea-loading');
+
+  const msgs = ['문제를 분석하고 있어요...', '발명 기법을 적용하는 중...', '아이디어를 정리하는 중...'];
+  let mi = 0;
+  const iv = setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    document.getElementById('idea-loading-text').textContent = msgs[mi];
+  }, 1800);
+
+  try {
+    const res = await callClaude(`사용자가 일상에서 겪은 불편함을 분석하고 창의적인 발명 아이디어 5개를 생성해주세요.
+
+불편함: "${problemText}"
+
+반드시 아래 JSON 형식만 출력하세요. 다른 텍스트는 절대 포함하지 마세요:
+{
+  "core_problem": "핵심 문제를 한 문장으로",
+  "target_user": "불편함을 겪는 사용자",
+  "situation": "언제/어디서 발생하는지",
+  "ideas": [
+    {
+      "name": "발명 이름",
+      "description": "아이디어를 한 문장으로 설명",
+      "method": "사용한 발상 기법",
+      "creativity": 4,
+      "feasibility": 3,
+      "marketability": 4
+    }
+  ]
+}
+아이디어는 정확히 5개, 각 점수는 1-5 정수, SCAMPER/역발상/결합 발상/극단적 조건/관점 변경 등 다양한 기법을 활용하세요.`);
+
+    clearInterval(iv);
+    const d = JSON.parse(res.replace(/```json|```/g, '').trim());
+    renderIdeas(d);
+  } catch(e) {
+    clearInterval(iv);
+    hideEl('idea-loading');
+    showEl('idea-results');
+    const eb = document.getElementById('idea-error');
+    eb.textContent = 'AI 연결에 실패했어요. 잠시 후 다시 시도해주세요.';
+    eb.style.display = 'block';
+  }
+}
+
+function renderIdeas(d) {
+  ideasData = d.ideas || [];
+  selectedIdx = null;
+  document.getElementById('core-problem').textContent = d.core_problem || '—';
+  document.getElementById('target-user').textContent = d.target_user || '—';
+  document.getElementById('situation').textContent = d.situation || '—';
+  document.getElementById('develop-btn').disabled = true;
+  document.getElementById('idea-error').style.display = 'none';
+
+  document.getElementById('ideas-list').innerHTML = ideasData.map((idea, i) => `
+    <div class="idea-card" id="icard-${i}" onclick="selectIdea(${i})">
+      <div class="idea-num">아이디어 ${i + 1} · ${idea.method || ''}</div>
+      <div class="idea-name">${idea.name}</div>
+      <div class="idea-desc">${idea.description}</div>
+      <div class="scores">
+        <div class="score-badge">창의성 <strong>${idea.creativity}/5</strong></div>
+        <div class="score-badge">실현 가능성 <strong>${idea.feasibility}/5</strong></div>
+        <div class="score-badge">시장성 <strong>${idea.marketability}/5</strong></div>
+      </div>
+    </div>
+  `).join('');
+
+  hideEl('idea-loading');
+  showEl('idea-results');
+}
+
+function selectIdea(i) {
+  document.querySelectorAll('.idea-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('icard-' + i).classList.add('selected');
+  selectedIdx = i;
+  document.getElementById('develop-btn').disabled = false;
+}
+
+async function developIdea() {
+  if (selectedIdx === null) return;
+  const idea = ideasData[selectedIdx];
+  hideEl('idea-results');
+  showEl('idea-loading');
+  document.getElementById('idea-loading-text').textContent = '아이디어를 발전시키는 중...';
+
+  try {
+    const res = await callClaude(`다음 발명 아이디어를 발명 카드 형식으로 상세하게 발전시켜주세요.
+
+원래 문제: "${problemText}"
+발명 이름: "${idea.name}"
+기본 설명: "${idea.description}"
+
+반드시 아래 JSON 형식만 출력하세요:
+{
+  "name": "발명 이름",
+  "tagline": "한 줄 슬로건",
+  "problem": "해결하는 문제",
+  "principle": "작동 원리 (2-3문장)",
+  "parts": ["핵심 부품1", "핵심 부품2", "핵심 부품3"],
+  "targets": ["주요 사용 장소/대상1", "사용 장소/대상2", "사용 장소/대상3"],
+  "difference": "기존 제품과의 차이점",
+  "effect": "기대 효과 (경제/환경/사회적)",
+  "challenge": "예상 기술적 도전 과제",
+  "next_step": "아이디어를 발전시킬 다음 단계"
+}`);
+
+    const card = JSON.parse(res.replace(/```json|```/g, '').trim());
+    renderDetail(card);
+  } catch(e) {
+    showIdeaResults();
+    document.getElementById('idea-error').textContent = 'AI 연결에 실패했어요.';
+    document.getElementById('idea-error').style.display = 'block';
+  }
+}
+
+function renderDetail(card) {
+  document.getElementById('detail-name').textContent = card.name;
+  document.getElementById('detail-tagline').textContent = card.tagline || '';
+  document.getElementById('detail-body').innerHTML = `
+    <div class="detail-label">해결 문제</div><div class="detail-value">${card.problem}</div>
+    <div class="detail-label">작동 원리</div><div class="detail-value">${card.principle}</div>
+    <div class="detail-label">핵심 부품</div><div class="detail-value"><ul>${(card.parts||[]).map(p=>`<li>${p}</li>`).join('')}</ul></div>
+    <div class="detail-label">적용 대상</div><div class="detail-value"><ul>${(card.targets||[]).map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    <div class="detail-label">기존 제품과의 차이</div><div class="detail-value">${card.difference}</div>
+    <div class="detail-label">기대 효과</div><div class="detail-value">${card.effect}</div>
+    <div class="detail-label">기술적 도전 과제</div><div class="detail-value">${card.challenge}</div>
+    <div class="detail-label">다음 단계</div><div class="detail-value">${card.next_step}</div>
+  `;
+  hideEl('idea-loading');
+  showEl('idea-detail');
+}
+
+// ===== 특허 명세서 =====
+let claims = [''];
+let secDone = [false, false, false, false, false, false];
+let invTitle = '', invAuthor = '';
+
+function checkPatentStart() {
+  invTitle = document.getElementById('inv-title').value.trim();
+  invAuthor = document.getElementById('inv-author').value.trim();
+  document.getElementById('patent-start-btn').disabled = !(invTitle && invAuthor);
+}
+
+function startPatent() {
+  invTitle = document.getElementById('inv-title').value.trim();
+  invAuthor = document.getElementById('inv-author').value.trim();
+  document.getElementById('patent-title-display').textContent = invTitle;
+  claims = [''];
+  secDone = [false,false,false,false,false,false];
+  renderClaims();
+  hideEl('patent-start');
+  showEl('patent-write');
+}
+
+function resetPatent() {
+  hideEl('patent-write');
+  hideEl('patent-preview');
+  showEl('patent-start');
+}
+
+function showPatentWrite() {
+  hideEl('patent-preview');
+  showEl('patent-write');
+}
+
+function toggleSec(i) {
+  const b = document.getElementById('s-body-' + i);
+  b.classList.toggle('open');
+}
+
+function onSec(i) {
+  let filled = false;
+  if (i === 0) filled = document.getElementById('f-bg-field').value.trim().length > 10 || document.getElementById('f-bg-problem').value.trim().length > 10;
+  else if (i === 2) filled = document.getElementById('f-struct').value.trim().length > 10 || document.getElementById('f-action').value.trim().length > 10;
+  else if (i === 3) filled = claims.some(c => c.trim().length > 10);
+  else if (i === 5) {
+    const v = document.getElementById('f-abstract').value;
+    document.getElementById('abstract-char').textContent = v.length + '자';
+    filled = v.trim().length > 30;
+  } else {
+    const ids = ['','f-obj','','','f-effect',''];
+    const el = document.getElementById(ids[i]);
+    filled = el && el.value.trim().length > 20;
+  }
+  secDone[i] = filled;
+  const st = document.getElementById('s-status-' + i);
+  st.className = 'status-badge ' + (filled ? 'status-done' : 'status-empty');
+  st.textContent = filled ? '작성됨' : '미작성';
+  const done = secDone.filter(Boolean).length;
+  document.getElementById('prog-bar').style.width = Math.round(done / 6 * 100) + '%';
+  document.getElementById('prog-label').textContent = done + ' / 6 섹션 완료';
+}
+
+function renderClaims() {
+  document.getElementById('claims-list').innerHTML = claims.map((c, i) => `
+    <div class="claim-row">
+      <span class="claim-label">청구항 ${i + 1}.</span>
+      <textarea rows="3" style="min-height:72px" placeholder="${i === 0 ? '예: 원형 링 형태의 본체, 흡수 패드, 물받이 수조를 포함하는 우산 건조 장치.' : '예: 청구항 1의 장치에 있어서, 상기 흡수 패드는 교체 가능한 카트리지 형태인 것을 특징으로 하는 장치.'}" oninput="updateClaim(${i},this.value)">${c}</textarea>
+      ${claims.length > 1 ? `<button class="claim-remove" onclick="removeClaim(${i})">×</button>` : ''}
+    </div>
+  `).join('');
+  document.getElementById('claim-count').textContent = '청구항 ' + claims.length + '개';
+  onSec(3);
+}
+
+function updateClaim(i, v) { claims[i] = v; onSec(3); }
+function addClaim() { claims.push(''); renderClaims(); }
+function removeClaim(i) { claims.splice(i, 1); renderClaims(); }
+
+const AI_PROMPTS = [
+  (t) => `발명 이름: "${t.invTitle}"\n기술 분야: "${document.getElementById('f-bg-field').value}"\n기존 문제점: "${document.getElementById('f-bg-problem').value}"\n\n학생이 특허 명세서의 "발명의 배경" 섹션을 더 잘 쓸 수 있도록 생각을 자극하는 질문 2~3개만 해주세요. 답을 직접 주지 말고 질문만, 친근한 말투로.`,
+  (t) => `발명 이름: "${t.invTitle}"\n현재 작성: "${document.getElementById('f-obj').value}"\n\n학생이 발명의 목적(해결 과제)을 더 명확하게 쓸 수 있도록 질문 2~3개만 해주세요. 답은 주지 말고.`,
+  (t) => `발명 이름: "${t.invTitle}"\n구성: "${document.getElementById('f-struct').value}"\n작동: "${document.getElementById('f-action').value}"\n\n학생이 구조와 작동 원리를 더 구체적으로 설명할 수 있도록 질문 2~3개만 해주세요.`,
+  (t) => `발명 이름: "${t.invTitle}"\n현재 청구항:\n${claims.map((c,i)=>`청구항 ${i+1}: "${c}"`).join('\n')}\n\n학생이 청구항을 더 탄탄하게 쓸 수 있도록 질문 2~3개만 해주세요. 범위가 적절한지 힌트 질문으로.`,
+  (t) => `발명 이름: "${t.invTitle}"\n현재 효과: "${document.getElementById('f-effect').value}"\n\n학생이 발명의 효과를 경제/환경/사회적 관점에서 더 생각할 수 있도록 질문 2~3개만 해주세요.`,
+  (t) => `발명 이름: "${t.invTitle}"\n현재 요약: "${document.getElementById('f-abstract').value}"\n\n학생이 요약을 더 완성도 있게 쓸 수 있도록 질문 2~3개만 해주세요. 문제-방법-효과가 담겼는지 확인하는 힌트로.`
+];
+
+async function askAI(i) {
+  const btn = document.getElementById('ai-btn-' + i);
+  const res = document.getElementById('ai-r-' + i);
+  btn.disabled = true;
+  btn.textContent = '생각하는 중...';
+  res.className = 'ai-result show';
+  res.textContent = '';
+  try {
+    const text = await callClaude(AI_PROMPTS[i]({ invTitle }));
+    res.textContent = text;
+  } catch(e) {
+    res.textContent = '잠시 후 다시 시도해주세요.';
+  }
+  btn.disabled = false;
+  btn.textContent = '✦ AI에게 힌트 질문받기';
+}
+
+function goPreview() {
+  const sections = [
+    { label: '발명의 명칭', val: invTitle },
+    { label: '발명자', val: invAuthor },
+    { label: '기술 분야', val: document.getElementById('f-bg-field').value },
+    { label: '배경 기술 (기존의 문제점)', val: document.getElementById('f-bg-problem').value },
+    { label: '발명이 해결하려는 과제', val: document.getElementById('f-obj').value },
+    { label: '발명의 구성 요소', val: document.getElementById('f-struct').value },
+    { label: '발명의 실시 방법', val: document.getElementById('f-action').value },
+    { label: '청구항', val: claims.map((c, i) => `청구항 ${i + 1}. ${c}`).join('\n\n') },
+    { label: '발명의 효과', val: document.getElementById('f-effect').value },
+    { label: '발명의 요약', val: document.getElementById('f-abstract').value }
+  ];
+  document.getElementById('preview-h').textContent = invTitle;
+  document.getElementById('preview-body').innerHTML = sections
+    .filter(s => s.val && s.val.trim())
+    .map(s => `<div class="preview-section"><div class="preview-label">${s.label}</div><div class="preview-value">${s.val}</div></div>`)
+    .join('');
+  hideEl('patent-write');
+  showEl('patent-preview');
+}
+
+function copySpec() {
+  const sections = [
+    { label: '【발명의 명칭】', val: invTitle },
+    { label: '【발명자】', val: invAuthor },
+    { label: '【기술 분야】', val: document.getElementById('f-bg-field').value },
+    { label: '【배경 기술】', val: document.getElementById('f-bg-problem').value },
+    { label: '【발명이 해결하려는 과제】', val: document.getElementById('f-obj').value },
+    { label: '【발명의 구성】', val: document.getElementById('f-struct').value },
+    { label: '【발명의 실시 방법】', val: document.getElementById('f-action').value },
+    { label: '【청구항】', val: claims.map((c, i) => `청구항 ${i + 1}. ${c}`).join('\n') },
+    { label: '【발명의 효과】', val: document.getElementById('f-effect').value },
+    { label: '【요약】', val: document.getElementById('f-abstract').value }
+  ];
+  const text = sections.filter(s => s.val && s.val.trim()).map(s => s.label + '\n' + s.val).join('\n\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ 복사됨!';
+    setTimeout(() => btn.textContent = '📋 명세서 복사하기', 2000);
+  });
+}
+
+// ===== Claude API =====
+async function callClaude(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  return data.content.map(b => b.text || '').join('');
+}
+</script>
+</body>
+</html>
